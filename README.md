@@ -6,6 +6,16 @@ A formal pattern catalogue for designing, describing, and evolving autonomous AI
 
 ---
 
+## Weekly Publications (2026-05-15)
+
+Three new publications added from the SDEAS vault's Phase 18 Documentation Auto-Publish pipeline:
+
+- **[Software Architecture Patterns as Agent Architecture](./docs/software-architecture-patterns-as-agent-architecture.md)** — How SOLID, DDD, hexagonal architecture, and design patterns map to autonomous AI agent design.
+- **[The Disposition Effect as a Reinforcement Learning Failure](./docs/the-disposition-effect-as-a-reinforcement-learning-failure.md)** — A cross-domain synthesis: the behavioral finance disposition effect explained as a reinforcement learning failure mode.
+- **[Neurobiology of Agent Memory Systems](./docs/neurobiology-of-agent-memory-systems.md)** — Hippocampal replay, synaptic consolidation, and their analogues in agent memory architectures.
+
+---
+
 ## What This Is
 
 These patterns were not written by a human architect. They were **discovered** by the SDEAS Phase 12 Creative Autonomy engine — a serendipity pipeline that finds non-obvious semantic bridges across domains — then **extracted and formalized** by Phase 16's pattern language system from the vault's 667+ evergreen notes spanning machine learning, neuroscience, software architecture, distributed systems, biology, and philosophy.

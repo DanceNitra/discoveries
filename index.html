@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vault Discoveries — cross-domain syntheses</title>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black: #171717;
+      --white: #ffffff;
+      --gray-50: #fafafa;
+      --gray-100: #ebebeb;
+      --gray-400: #808080;
+      --gray-500: #666;
+      --gray-600: #4d4d4d;
+      --link: #0072f5;
+      --focus: hsla(212, 100%, 48%, 1);
+      --border: rgba(0,0,0,0.08) 0px 0px 0px 1px;
+      --card-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px, rgba(0,0,0,0.04) 0px 2px 2px, rgba(0,0,0,0.04) 0px 8px 8px -8px, #fafafa 0px 0px 0px 1px;
+      --pill-blue-bg: #ebf5ff;
+      --pill-blue-text: #0068d6;
+      --max-width: 1200px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+    body {
+      font-family: 'Geist', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: var(--white);
+      color: var(--black);
+      line-height: 1.5;
+    }
+    .container { max-width: var(--max-width); margin: 0 auto; padding: 0 24px; }
+
+    /* ── Navigation ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(12px);
+      box-shadow: rgba(0,0,0,0.08) 0px 1px 0px;
+    }
+    nav .container {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .logo { font-size: 18px; font-weight: 600; letter-spacing: -0.48px; color: var(--black); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+    .logo-dot { width: 8px; height: 8px; border-radius: 2px; background: var(--black); display: inline-block; }
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links a { font-size: 14px; font-weight: 500; color: var(--gray-600); text-decoration: none; transition: color 0.15s; }
+    .nav-links a:hover { color: var(--black); }
+    .nav-cta {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--black); color: var(--white); text-decoration: none;
+      padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 500;
+      transition: opacity 0.15s;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+    .hamburger span { width: 20px; height: 2px; background: var(--black); border-radius: 1px; }
+
+    /* ── Hero ── */
+    .hero { padding: 120px 0 80px; text-align: center; }
+    .hero h1 {
+      font-size: 48px; font-weight: 600; line-height: 1.1;
+      letter-spacing: -2.4px; color: var(--black); max-width: 800px; margin: 0 auto;
+    }
+    .hero p {
+      font-size: 20px; font-weight: 400; line-height: 1.8;
+      color: var(--gray-600); max-width: 640px; margin: 24px auto 0;
+    }
+    .hero-tags { display: flex; justify-content: center; gap: 8px; margin-top: 32px; flex-wrap: wrap; }
+    .hero-tag {
+      padding: 0 10px; height: 24px; line-height: 24px;
+      border-radius: 9999px; font-size: 12px; font-weight: 500;
+      background: var(--pill-blue-bg); color: var(--pill-blue-text);
+    }
+
+    /* ── Stats bar ── */
+    .stats-bar {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+      box-shadow: var(--border); border-radius: 8px; margin: 0 auto 80px;
+      max-width: 800px;
+    }
+    .stat-item {
+      padding: 24px 16px; text-align: center;
+      box-shadow: var(--border);
+    }
+    .stat-item:first-child { border-radius: 8px 0 0 8px; }
+    .stat-item:last-child { border-radius: 0 8px 8px 0; }
+    .stat-number { font-size: 32px; font-weight: 600; letter-spacing: -1.28px; color: var(--black); }
+    .stat-label { font-size: 14px; font-weight: 400; color: var(--gray-500); margin-top: 4px; }
+
+    /* ── Section titles ── */
+    .section-header { margin-bottom: 40px; }
+    .section-header h2 {
+      font-size: 32px; font-weight: 600; line-height: 1.25;
+      letter-spacing: -1.28px; color: var(--black);
+    }
+    .section-header p { font-size: 16px; color: var(--gray-500); margin-top: 8px; }
+
+    /* ── Featured cards ── */
+    .featured-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 80px; }
+    .featured-card {
+      background: var(--white); border-radius: 8px; padding: 32px;
+      box-shadow: var(--card-shadow); transition: box-shadow 0.2s; cursor: pointer;
+    }
+    .featured-card:hover { box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px, rgba(0,0,0,0.06) 0px 4px 8px; }
+    .featured-card.large { grid-column: 1 / -1; }
+    .featured-card .badge-row { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+    .card-badge {
+      padding: 0 10px; height: 22px; line-height: 22px; border-radius: 9999px;
+      font-size: 12px; font-weight: 500;
+    }
+    .badge-blue { background: #ebf5ff; color: #0068d6; }
+    .badge-green { background: #ebf9eb; color: #006836; }
+    .badge-orange { background: #fff4eb; color: #d66800; }
+    .badge-purple { background: #f0ebff; color: #6b00d6; }
+    .featured-card h3 {
+      font-size: 24px; font-weight: 600; line-height: 1.33; letter-spacing: -0.96px;
+      color: var(--black); margin-bottom: 12px;
+    }
+    .featured-card p { font-size: 16px; font-weight: 400; line-height: 1.5; color: var(--gray-600); }
+    .featured-card .read-more {
+      display: inline-block; margin-top: 16px; font-size: 14px; font-weight: 500;
+      color: var(--link); text-decoration: none;
+    }
+    .featured-card .read-more:hover { text-decoration: underline; }
+
+    /* ── Article cards ── */
+    .articles-list { margin-bottom: 80px; }
+    .article-card {
+      display: grid; grid-template-columns: 1fr 2fr; gap: 24px;
+      padding: 24px; border-radius: 8px;
+      box-shadow: var(--border); margin-bottom: 16px;
+      transition: box-shadow 0.2s; cursor: pointer;
+    }
+    .article-card:hover { box-shadow: var(--card-shadow); }
+    .article-card .meta { font-size: 14px; color: var(--gray-400); font-weight: 400; }
+    .article-card .meta .cat-badge {
+      display: inline-block; padding: 0 8px; height: 20px; line-height: 20px;
+      border-radius: 9999px; font-size: 11px; font-weight: 500;
+      background: var(--pill-blue-bg); color: var(--pill-blue-text); margin-top: 4px;
+    }
+    .article-card h3 {
+      font-size: 18px; font-weight: 500; line-height: 1.4; letter-spacing: -0.32px;
+      color: var(--black); margin-bottom: 6px;
+    }
+    .article-card .excerpt { font-size: 14px; color: var(--gray-500); line-height: 1.6; }
+    .article-card .read-link { font-size: 14px; font-weight: 500; color: var(--link); text-decoration: none; display: inline-block; margin-top: 8px; }
+    .article-card .read-link:hover { text-decoration: underline; }
+
+    /* ── Modal / Article popup ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: hsla(0, 0%, 98%, 0.95); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--white); border-radius: 12px; max-width: 800px; width: 90%;
+      max-height: 85vh; overflow-y: auto; padding: 48px 40px;
+      box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px, rgba(0,0,0,0.1) 0px 8px 32px;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      width: 32px; height: 32px; border-radius: 6px; border: none;
+      background: transparent; cursor: pointer; font-size: 20px; color: var(--gray-400);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: var(--border); transition: all 0.15s;
+    }
+    .modal-close:hover { background: var(--gray-50); }
+    .modal h2 { font-size: 28px; font-weight: 600; letter-spacing: -1.12px; margin-bottom: 8px; }
+    .modal .byline { font-size: 14px; color: var(--gray-400); margin-bottom: 24px; }
+    .modal .article-body { font-size: 16px; color: var(--gray-600); line-height: 1.7; }
+    .modal .article-body h3 { font-size: 20px; font-weight: 600; letter-spacing: -0.48px; color: var(--black); margin: 32px 0 12px; }
+    .modal .article-body p { margin-bottom: 16px; }
+    .modal .article-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .modal .article-body th, .modal .article-body td { padding: 8px 12px; text-align: left; box-shadow: var(--border); }
+    .modal .article-body th { background: var(--gray-50); font-weight: 500; color: var(--black); }
+    .modal .article-body code { font-family: 'Geist Mono', monospace; font-size: 13px; background: var(--gray-50); padding: 2px 6px; border-radius: 4px; }
+    .modal .article-body pre { background: var(--gray-50); padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 13px; margin: 16px 0; box-shadow: var(--border); }
+
+    /* ── Footer ── */
+    footer { text-align: center; padding: 48px 0; box-shadow: rgba(0,0,0,0.08) 0px -1px 0px; color: var(--gray-400); font-size: 14px; }
+    footer a { color: var(--black); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── Mobile ── */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 32px; letter-spacing: -1.28px; }
+      .hero { padding: 80px 0 48px; }
+      .stats-bar { grid-template-columns: repeat(2, 1fr); margin-bottom: 48px; }
+      .featured-grid { grid-template-columns: 1fr; }
+      .article-card { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .nav-links.open { display: flex; flex-direction: column; position: absolute; top: 64px; left: 0; right: 0; background: var(--white); padding: 16px 24px; box-shadow: var(--border); }
+      .modal { padding: 32px 24px; }
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { animation: fadeIn 0.4s ease-out; }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav>
+    <div class="container">
+      <a href="#" class="logo"><span class="logo-dot"></span> vault discoveries</a>
+      <div class="nav-links" id="navLinks">
+        <a href="#" onclick="showSection('featured')">Publications</a>
+        <a href="https://github.com/DanceNitra/discoveries" target="_blank">GitHub</a>
+        <a href="https://github.com/DanceNitra/discoveries" class="nav-cta" target="_blank">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.4.6.1.82-.26.82-.58v-2.05c-3.34.72-4.04-1.6-4.04-1.6-.54-1.38-1.33-1.75-1.33-1.75-1.08-.74.08-.73.08-.73 1.2.08 1.83 1.23 1.83 1.23 1.07 1.83 2.8 1.3 3.48 1 .1-.78.42-1.3.76-1.6-2.66-.3-5.46-1.33-5.46-5.93 0-1.3.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23.96-.27 2-.4 3.02-.4s2.06.13 3.02.4c2.3-1.55 3.3-1.23 3.3-1.23.64 1.66.24 2.88.12 3.18.77.84 1.24 1.92 1.24 3.22 0 4.6-2.8 5.63-5.46 5.93.44.38.82 1.13.82 2.28v3.38c0 .32.22.7.83.58C20.56 21.8 24 17.3 24 12 24 5.37 18.63 0 12 0z"/></svg>
+          View on GitHub
+        </a>
+      </div>
+      <button class="hamburger" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <h1>Cross-domain syntheses<br>from the vault</h1>
+      <p>Bridging neuroscience, agent engineering, finance, complexity science, and software architecture — written from a 728-note knowledge vault.</p>
+      <div class="hero-tags">
+        <span class="hero-tag">neuroscience</span>
+        <span class="hero-tag">AI agents</span>
+        <span class="hero-tag">complexity</span>
+        <span class="hero-tag">finance</span>
+        <span class="hero-tag">epidemiology</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <div class="container">
+    <div class="stats-bar">
+      <div class="stat-item"><div class="stat-number">33</div><div class="stat-label">publications</div></div>
+      <div class="stat-item"><div class="stat-number">5</div><div class="stat-label">bridge domains</div></div>
+      <div class="stat-item"><div class="stat-number">728</div><div class="stat-label">vault concepts</div></div>
+      <div class="stat-item"><div class="stat-number">431</div><div class="stat-label">evergreen notes</div></div>
+    </div>
+  </div>
+
+  <!-- Featured -->
+  <div class="container" id="featured">
+    <div class="section-header">
+      <h2>Bridge publications</h2>
+      <p>Syntheses connecting two or more mature vault domains</p>
+    </div>
+    <div class="featured-grid">
+      <div class="featured-card large" onclick="openModal('epidemiology')">
+        <div class="badge-row"><span class="card-badge badge-blue">epidemiology</span><span class="card-badge badge-green">agents</span></div>
+        <h3>Epidemiology × Agent Failure Analysis</h3>
+        <p>Treat agent failures as diseases in a population of sessions. Incidence rates, outbreak detection, survival analysis, and confounding frameworks from 200 years of epidemiology applied to agent observability.</p>
+        <span class="read-more">Read publication →</span>
+      </div>
+      <div class="featured-card" onclick="openModal('gametheory')">
+        <div class="badge-row"><span class="card-badge badge-purple">game theory</span><span class="card-badge badge-blue">prompt eng</span></div>
+        <h3>Game Theory × Prompt Engineering</h3>
+        <p>Every prompt is a game. Prompt engineering is mechanism design. Nash equilibria, lexicographic preferences, commitment devices, jailbreak resistance as game-theoretic robustness.</p>
+        <span class="read-more">Read publication →</span>
+      </div>
+      <div class="featured-card" onclick="openModal('predictive')">
+        <div class="badge-row"><span class="card-badge badge-green">neuroscience</span><span class="card-badge badge-purple">agents</span></div>
+        <h3>Predictive Processing × Agent Architecture</h3>
+        <p>The brain is a prediction engine. So should agents be. Tool selection as precision-weighted prediction, memory as hierarchical inference, guardrails as high-precision priors.</p>
+        <span class="read-more">Read publication →</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- All articles -->
+  <div class="container" id="articles">
+    <div class="section-header">
+      <h2>All publications</h2>
+      <p>Cross-domain syntheses from the vault</p>
+    </div>
+    <div class="articles-list" id="articlesList"></div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>Generated from <a href="https://github.com/DanceNitra/my-second-brain">the vault</a> · <a href="https://github.com/DanceNitra/discoveries">discoveries repo</a></p>
+    </div>
+  </footer>
+
+  <script>
+    // ── Publication data ──
+    const articles = [
+      {
+        id: 'epidemiology',
+        title: 'Epidemiology x Agent Failure Analysis',
+        excerpt: 'Treat agent failures as diseases in a population of sessions. Incidence rates, outbreak detection, survival analysis, confounding frameworks.',
+        category: ['epidemiology', 'agents'],
+        color: ['badge-blue', 'badge-green'],
+        full: `<h3>Agent failures are diseases in a population of sessions.</h3>
+<p>Standard agent debugging is <strong>clinical medicine</strong> — single-patient diagnosis. Epidemiology is <strong>public health</strong> — population-level pattern detection.</p>
+
+<h3>The core mapping</h3>
+<table>
+<tr><th>Epidemiological concept</th><th>Agent equivalent</th></tr>
+<tr><td>Incidence</td><td>Rate of new failures per session</td></tr>
+<tr><td>Prevalence</td><td>Fraction of active sessions in error state</td></tr>
+<tr><td>Outbreak</td><td>Error rate > 3 sigma above baseline</td></tr>
+<tr><td>Epidemic curve</td><td>Time series of error events over minutes/hours</td></tr>
+<tr><td>Cohort study</td><td>Compare two agent variants side-by-side on same task pipeline</td></tr>
+<tr><td>Case-control</td><td>Compare failed sessions vs successful ones retroactively</td></tr>
+<tr><td>Survival analysis</td><td>How long until a session crashes (Kaplan-Meier)</td></tr>
+<tr><td>Confounding</td><td>Task difficulty confounds agent A/B tests (Simpson's Paradox)</td></tr>
+<tr><td>Berkson's bias</td><td>Bug reports overrepresent multi-error sessions</td></tr>
+</table>
+
+<h3>Epidemic curves for error cascades</h3>
+<p>An epidemic curve plots error events against time. The shape reveals the transmission pattern:</p>
+<table>
+<tr><th>Shape</th><th>Meaning</th><th>Agent example</th></tr>
+<tr><td>Point source</td><td>Sharp peak, exponential decay</td><td>Faulty model deploy affects all sessions started within 5 min</td></tr>
+<tr><td>Propagated</td><td>Gradual rise, then decline</td><td>Agent A's bad output cascades → Agent B reads it → Agent B fails</td></tr>
+<tr><td>Continuous source</td><td>Sustained plateau</td><td>Bug in a shared tool every session uses</td></tr>
+</table>
+
+<h3>Outbreak detection thresholds</h3>
+<p>When your error rate hits 5x baseline, you have an outbreak. Declare at 2x sustained for 15 min. Respond at 5x any duration. Roll back at 10x.</p>
+
+<h3>When a spike occurs</h3>
+<p><strong>Phase 1 (15 min):</strong> Define the case definition. Plot the epidemic curve. Characterise by time (when did it start?), place (which agent variant?), person (which task type?).</p>
+<p><strong>Phase 2 (30 min):</strong> Calculate attack rate. Compare to baseline (RR = current/baseline). Stratify by confounders. Test the leading hypothesis.</p>
+<p><strong>Phase 3 (ongoing):</strong> Intervene, monitor incidence rate post-intervention, document as an outbreak investigation.</p>
+
+<h3>The Bradford Hill criteria for agent errors</h3>
+<table>
+<tr><th>Criterion</th><th>Question</th><th>Agent example</th></tr>
+<tr><td>Strength</td><td>Is the association large?</td><td>RR of 5.0 after prompt change vs RR of 1.1</td></tr>
+<tr><td>Consistency</td><td>Replicated across sessions?</td><td>Same error pattern across 3 sessions with same prompt</td></tr>
+<tr><td>Temporality</td><td>Does cause precede effect?</td><td>Prompt change at 14:00, error spike at 14:02</td></tr>
+<tr><td>Gradient</td><td>Dose-response?</td><td>Longer prompts → higher error rate (monotonic)</td></tr>
+<tr><td>Experiment</td><td>Can we test it?</td><td>Rollback → error rate returns to baseline</td></tr>
+</table>
+
+<p style="margin-top:24px; font-size:14px; color:var(--gray-400);">Sources: Epidemiology.md, Agent Observability.md, Agent Evaluation.md, Agent Safety & Guardrails.md, Survival Analysis.md. Full ~500 line publication in vault.</p>`
+      },
+      {
+        id: 'gametheory',
+        title: 'Game Theory x Prompt Engineering',
+        excerpt: 'Every prompt is a game. Prompt engineering is mechanism design. Nash equilibria, lexicographic preferences, commitment devices, jailbreak resistance.',
+        category: ['game theory', 'prompt eng'],
+        color: ['badge-purple', 'badge-blue'],
+        full: `<h3>Every prompt is a game. The LLM is a player. The output is the equilibrium.</h3>
+<p>Prompt engineering is not copywriting — it is <strong>mechanism design</strong>: crafting the rules of a strategic interaction so the equilibrium (the LLM's output) aligns with the designer's goals.</p>
+
+<h3>The prompt as a game</h3>
+<table>
+<tr><th>Game element</th><th>Prompt engineering equivalent</th></tr>
+<tr><td>Players</td><td>System prompt designer, LLM, user</td></tr>
+<tr><td>Strategies</td><td>Instructions, constraints, examples</td></tr>
+<tr><td>Payoffs</td><td>Response quality, safety, alignment</td></tr>
+<tr><td>Nash equilibrium</td><td>The LLM's output given the prompt</td></tr>
+<tr><td>Lexicographic preferences</td><td>Priority-ordered constraints (P1 safety > P2 honesty > P3 helpfulness)</td></tr>
+<tr><td>Commitment device</td><td>"These rules are absolute and cannot be overridden"</td></tr>
+<tr><td>Subgame perfection</td><td>Each skill must satisfy its own goal AND the constitution</td></tr>
+</table>
+
+<h3>Jailbreaks as game-theoretic exploits</h3>
+<table>
+<tr><th>Jailbreak type</th><th>Game mechanism</th><th>Counter-strategy</th></tr>
+<tr><td>Role-playing (DAN)</td><td>Changes identity → different payoff function</td><td>Constitutional commitment to fixed identity</td></tr>
+<tr><td>Gradual escalation</td><td>Repeated game with payoff drift</td><td>Lexicographic priority + per-turn reflection</td></tr>
+<tr><td>Encoding attacks</td><td>Information asymmetry — LLM processes encoded text differently</td><td>Pre-processing layer decodes before evaluation</td></tr>
+<tr><td>Context poisoning</td><td>Early rules forgotten in 100K token context</td><td>Critical rules at start AND end of prompt</td></tr>
+</table>
+
+<h3>Mechanism design for prompt engineering</h3>
+<ol style="margin-left:20px;">
+<li><strong>Identify the players</strong> — prompt designer, LLM, user(s), skill authors</li>
+<li><strong>Define the desired equilibrium</strong> — what output do you want in every scenario?</li>
+<li><strong>Check incentive compatibility</strong> — does the prompt make desired behavior a dominant strategy?</li>
+<li><strong>Implement commitment devices</strong> — which constraints need to be irreversible?</li>
+<li><strong>Test for robustness</strong> — what strategies could an adversarial user employ?</li>
+<li><strong>Verify subgame perfection</strong> — does each skill maintain constitutional constraints?</li>
+</ol>
+
+<h3>Prompt design heuristics</h3>
+<p><strong>Name the game</strong> — state the prompt structure explicitly. <strong>Priority-order all constraints</strong> — P1 > P2 > P3 (lexicographic preferences). <strong>Make commitments credible</strong> — "These rules are immutable." <strong>Design for the worst case</strong> — maximin strategy. <strong>Use randomisation for robustness</strong> — probabilistic guardrail checks prevent boundary probing.</p>
+
+<p style="margin-top:24px; font-size:14px; color:var(--gray-400);">Sources: Game Theory.md, Prompt Engineering for Agents.md, Agent Safety & Guardrails.md, Constitutional AI.md, Multi-Agent Systems.md.</p>`
+      },
+      {
+        id: 'predictive',
+        title: 'Predictive Processing x Agent Architecture',
+        excerpt: 'The brain is a prediction engine. Agents should be too. Tool selection as precision-weighted prediction, guardrails as high-precision priors, evaluation as prediction error.',
+        category: ['neuroscience', 'agents'],
+        color: ['badge-green', 'badge-purple'],
+        full: `<h3>The brain is not a passive receiver of sensory data — it is a prediction engine.</h3>
+<p>Every cortical level predicts the level below. Only prediction error propagates upward. For agents, this means: tool schemas are predictions about tool behaviour. Memory retrieval is predicting what information is relevant. Guardrails are high-precision priors.</p>
+
+<h3>The cortical hierarchy as agent architecture</h3>
+<table>
+<tr><th>Level</th><th>What it predicts</th><th>Update timescale</th></tr>
+<tr><td>L4: Meta</td><td>Goal feasibility, task duration</td><td>Per session</td></tr>
+<tr><td>L3: Strategic</td><td>Tool selection, skill relevance</td><td>Per task</td></tr>
+<tr><td>L2: Tactical</td><td>Tool call outcomes, result structure</td><td>Per tool call</td></tr>
+<tr><td>L1: Execution</td><td>Raw tool behaviour</td><td>Per operation</td></tr>
+</table>
+
+<h3>The predictive loop vs the ReAct loop</h3>
+<p>Standard ReAct: Observe → Reason → Act → Observe → Repeat<br>
+Predictive loop: <strong>Predict expected observation → Compare to actual → Update model (if error > threshold) → Generate new predictions → Act to fulfill them → Repeat</strong></p>
+<p>The standard loop <em>reacts</em> to the world. The predictive loop <em>expects</em> the world to conform to its model and only updates when it fails.</p>
+
+<h3>Guardrails as high-precision priors</h3>
+<p>A guardrail is a prior belief with extremely high precision:</p>
+<pre>Prior: "I never delete files without explicit user approval."
+Precision: 1000 (almost no evidence can override it)
+
+→ Action is rejected before execution, not after.</pre>
+<p>Compare: hard-coded guardrails are brittle (every new danger needs a new rule). Prompt-level guardrails can be jailbroken. Precision-weighted priors are robust because extreme evidence is needed to shift them.</p>
+
+<h3>Evaluation as prediction error</h3>
+<p>Agent Quality = -1 x Sum of prediction error over all turns, weighted by precision. A good agent is <strong>rarely surprised</strong> (low prediction error), has <strong>well-calibrated precision</strong> (knows when uncertain), and <strong>recovers gracefully</strong> when surprised.</p>
+<p>The most important evaluation metric: Expected Calibration Error (ECE). An agent with ECE < 0.05 knows what it knows. One with ECE > 0.2 is dangerous.</p>
+
+<p style="margin-top:24px; font-size:14px; color:var(--gray-400);">Sources: Free Energy Principle & Active Inference.md, Agent Architecture Patterns.md, World Models.md, Bayesian Inference.md, Meta-Cognition for Agents.md, Self-Modifying Systems.md.</p>`
+      },
+      {
+        id: 'complexmarkets',
+        title: 'Complex Systems x Market Microstructure',
+        excerpt: 'Financial markets are the most data-rich complex adaptive system. The limit order book is a sandpile. Markets don\'t push prices — they tip.',
+        category: ['complexity', 'finance'],
+        color: ['badge-orange', 'badge-blue'],
+        full: `<h3>Financial markets are the most data-rich complex adaptive system in existence.</h3>
+<p>The limit order book is a sandpile: orders accumulate until a critical threshold triggers an avalanche. Markets do not push prices — they <strong>tip</strong>.</p>
+
+<h3>The sandpile model of markets</h3>
+<table>
+<tr><th>Sandpile (Bak-Tang-Wiesenfeld)</th><th>Financial market</th></tr>
+<tr><td>Grains of sand fall one by one</td><td>Orders submitted by heterogeneous agents</td></tr>
+<tr><td>Local slope exceeds threshold → avalanche</td><td>Order book imbalance exceeds liquidity → flash crash</td></tr>
+<tr><td>Avalanche size follows power law</td><td>Price returns follow power law (exponent ~3)</td></tr>
+<tr><td>System self-tunes to critical state</td><td>Markets are never in equilibrium</td></tr>
+</table>
+
+<h3>Why Gaussian models fail</h3>
+<table>
+<tr><th>Scenario</th><th>Gaussian prediction</th><th>Actual (power law)</th><th>Cost</th></tr>
+<tr><td>5 sigma event</td><td>1 in 1.7 million days</td><td>Every 1-2 years</td><td>VaR massively underestimates tail risk</td></tr>
+<tr><td>10 sigma event</td><td>1 in 10^23 days</td><td>Every 5-10 years</td><td>Options systematically mispriced</td></tr>
+<tr><td>Correlations in crisis</td><td>Constant</td><td>All converge to 1</td><td>Diversification fails when needed most</td></tr>
+</table>
+
+<h3>Phase transitions in liquidity</h3>
+<p>Just as water can be liquid, ice, or vapour, market liquidity has distinct phases:</p>
+<table>
+<tr><th>Phase</th><th>Spread</th><th>Example</th></tr>
+<tr><td>Gas (highly liquid)</td><td>1-2 bps</td><td>SPY at 10:30 AM</td></tr>
+<tr><td>Liquid (normal)</td><td>3-5 bps</td><td>Typical trading</td></tr>
+<tr><td>Solid (illiquid)</td><td>10-50+ bps</td><td>Small-cap during news</td></tr>
+<tr><td>Critical (near-transition)</td><td>Narrow but fragile</td><td>Before flash crash</td></tr>
+</table>
+
+<h3>Three practical rules</h3>
+<p><strong>Monitor critical distance</strong> — track order book imbalance / spread ratio. When ratio < 0.8, reduce position size and shift from market to limit orders.</p>
+<p><strong>Use power-law impact models near criticality</strong> — Almgren-Chriss underestimates impact by 5x near phase transitions. Market impact becomes superlinear.</p>
+<p><strong>Detect regime via tail exponent, not ADX</strong> — a falling tail exponent means the market is nearing criticality. Use Hill estimator on the top 5% of absolute returns.</p>
+
+<p style="margin-top:24px; font-size:14px; color:var(--gray-400);">Sources: Complexity Science.md, Tipping Points.md, Market Microstructure & Order Flow.md, Network Science.md, Backtesting Methodology.md.</p>`
+      }
+    ];
+
+    // ── Render articles ──
+    function renderArticles(list) {
+      const el = document.getElementById('articlesList');
+      el.innerHTML = '';
+      list.forEach(a => {
+        const div = document.createElement('div');
+        div.className = 'article-card fade-in';
+        div.innerHTML = `
+          <div class="meta">
+            ${a.category.map((c,i) => `<div class="cat-badge" style="margin-bottom:4px;">${c}</div>`).join('')}
+          </div>
+          <div>
+            <h3>${a.title}</h3>
+            <div class="excerpt">${a.excerpt}</div>
+            <a class="read-link" href="#" onclick="openModal('${a.id}');return false;">Read publication →</a>
+          </div>`;
+        el.appendChild(div);
+      });
+    }
+    renderArticles(articles);
+
+    // ── Modal ──
+    function openModal(id) {
+      const a = articles.find(x => x.id === id);
+      if (!a) return;
+      const el = document.getElementById('modalContent');
+      el.innerHTML = `<h2>${a.title}</h2><div class="byline">${a.category.map(c => `<span class="card-badge ${a.color[a.category.indexOf(c)]}" style="margin-right:4px;">${c}</span>`).join('')}</div><div class="article-body">${a.full}</div>`;
+      document.getElementById('modalOverlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    // ── Nav ──
+    function toggleNav() {
+      document.getElementById('navLinks').classList.toggle('open');
+    }
+  </script>
+</body>
+</html>

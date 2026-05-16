@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vault Discoveries — cross-domain syntheses</title>
+  <title>Vault Discoveries</title>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -11,518 +11,509 @@
       --white: #ffffff;
       --gray-50: #fafafa;
       --gray-100: #ebebeb;
+      --gray-200: #e0e0e0;
       --gray-400: #808080;
       --gray-500: #666;
       --gray-600: #4d4d4d;
       --link: #0072f5;
-      --focus: hsla(212, 100%, 48%, 1);
+      --link-hover: #0050b3;
+      --accent: #0072f5;
       --border: rgba(0,0,0,0.08) 0px 0px 0px 1px;
-      --card-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px, rgba(0,0,0,0.04) 0px 2px 2px, rgba(0,0,0,0.04) 0px 8px 8px -8px, #fafafa 0px 0px 0px 1px;
-      --pill-blue-bg: #ebf5ff;
-      --pill-blue-text: #0068d6;
-      --max-width: 1200px;
+      --card: rgba(0,0,0,0.08) 0px 0px 0px 1px, rgba(0,0,0,0.04) 0px 2px 2px, rgba(0,0,0,0.04) 0px 8px 8px -8px, #fafafa 0px 0px 0px 1px;
+      --max-w: 1100px;
+      --content-w: 720px;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+    html { scroll-behavior: smooth; }
     body {
-      font-family: 'Geist', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      font-family: 'Geist', system-ui, -apple-system, sans-serif;
       background: var(--white);
       color: var(--black);
-      line-height: 1.5;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
     }
-    .container { max-width: var(--max-width); margin: 0 auto; padding: 0 24px; }
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+    .content { max-width: var(--content-w); margin: 0 auto; }
 
-    /* ── Navigation ── */
+    /* NAV */
     nav {
       position: sticky; top: 0; z-index: 100;
-      background: rgba(255,255,255,0.9);
+      background: rgba(255,255,255,0.85);
       backdrop-filter: blur(12px);
-      box-shadow: rgba(0,0,0,0.08) 0px 1px 0px;
+      box-shadow: rgba(0,0,0,0.06) 0px 1px 0px;
     }
     nav .container {
       display: flex; align-items: center; justify-content: space-between;
-      height: 64px;
+      height: 60px;
     }
-    .logo { font-size: 18px; font-weight: 600; letter-spacing: -0.48px; color: var(--black); text-decoration: none; display: flex; align-items: center; gap: 8px; }
-    .logo-dot { width: 8px; height: 8px; border-radius: 2px; background: var(--black); display: inline-block; }
-    .nav-links { display: flex; align-items: center; gap: 32px; }
-    .nav-links a { font-size: 14px; font-weight: 500; color: var(--gray-600); text-decoration: none; transition: color 0.15s; }
-    .nav-links a:hover { color: var(--black); }
-    .nav-cta {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: var(--black); color: var(--white); text-decoration: none;
-      padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 500;
-      transition: opacity 0.15s;
+    .logo { font-size: 16px; font-weight: 600; letter-spacing: -0.4px; color: var(--black); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+    .logo span { width: 7px; height: 7px; border-radius: 2px; background: var(--black); display: inline-block; }
+    .nav-r a { font-size: 14px; color: var(--gray-500); text-decoration: none; margin-left: 28px; transition: color .15s; }
+    .nav-r a:hover { color: var(--black); }
+    .nav-r .cta {
+      display: inline-block; background: var(--black); color: var(--white); padding: 6px 14px;
+      border-radius: 6px; font-size: 13px; font-weight: 500; margin-left: 20px;
     }
-    .nav-cta:hover { opacity: 0.85; }
-    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
-    .hamburger span { width: 20px; height: 2px; background: var(--black); border-radius: 1px; }
+    .nav-r .cta:hover { opacity: .85; color: var(--white); }
 
-    /* ── Hero ── */
-    .hero { padding: 120px 0 80px; text-align: center; }
+    /* HERO */
+    .hero { padding: 100px 0 60px; text-align: center; }
     .hero h1 {
-      font-size: 48px; font-weight: 600; line-height: 1.1;
-      letter-spacing: -2.4px; color: var(--black); max-width: 800px; margin: 0 auto;
+      font-size: clamp(32px,5vw,52px); font-weight: 600; line-height: 1.08;
+      letter-spacing: -0.03em; max-width: 700px; margin: 0 auto;
     }
     .hero p {
-      font-size: 20px; font-weight: 400; line-height: 1.8;
-      color: var(--gray-600); max-width: 640px; margin: 24px auto 0;
-    }
-    .hero-tags { display: flex; justify-content: center; gap: 8px; margin-top: 32px; flex-wrap: wrap; }
-    .hero-tag {
-      padding: 0 10px; height: 24px; line-height: 24px;
-      border-radius: 9999px; font-size: 12px; font-weight: 500;
-      background: var(--pill-blue-bg); color: var(--pill-blue-text);
+      font-size: 18px; color: var(--gray-500); max-width: 560px;
+      margin: 18px auto 0; line-height: 1.7;
     }
 
-    /* ── Stats bar ── */
-    .stats-bar {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
-      box-shadow: var(--border); border-radius: 8px; margin: 0 auto 80px;
-      max-width: 800px;
-    }
-    .stat-item {
-      padding: 24px 16px; text-align: center;
-      box-shadow: var(--border);
-    }
-    .stat-item:first-child { border-radius: 8px 0 0 8px; }
-    .stat-item:last-child { border-radius: 0 8px 8px 0; }
-    .stat-number { font-size: 32px; font-weight: 600; letter-spacing: -1.28px; color: var(--black); }
-    .stat-label { font-size: 14px; font-weight: 400; color: var(--gray-500); margin-top: 4px; }
+    /* STATS */
+    .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; max-width: 600px; margin: 50px auto 70px; box-shadow: var(--border); border-radius: 8px; }
+    .stat { padding: 22px 12px; text-align: center; }
+    .stat+.stat { box-shadow: var(--border); }
+    .stat-num { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; }
+    .stat-lbl { font-size: 13px; color: var(--gray-500); margin-top: 2px; }
 
-    /* ── Section titles ── */
-    .section-header { margin-bottom: 40px; }
-    .section-header h2 {
-      font-size: 32px; font-weight: 600; line-height: 1.25;
-      letter-spacing: -1.28px; color: var(--black);
-    }
-    .section-header p { font-size: 16px; color: var(--gray-500); margin-top: 8px; }
+    /* INDEX */
+    .index { margin-bottom: 80px; }
+    .index h2 { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 4px; }
+    .index > .content > p { color: var(--gray-500); font-size: 15px; margin-bottom: 36px; }
 
-    /* ── Featured cards ── */
-    .featured-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 80px; }
-    .featured-card {
-      background: var(--white); border-radius: 8px; padding: 32px;
-      box-shadow: var(--card-shadow); transition: box-shadow 0.2s; cursor: pointer;
+    .entry {
+      display: block; padding: 28px 0; text-decoration: none; color: inherit;
+      box-shadow: rgba(0,0,0,0.06) 0px 1px 0px; transition: opacity .15s;
     }
-    .featured-card:hover { box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px, rgba(0,0,0,0.06) 0px 4px 8px; }
-    .featured-card.large { grid-column: 1 / -1; }
-    .featured-card .badge-row { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
-    .card-badge {
-      padding: 0 10px; height: 22px; line-height: 22px; border-radius: 9999px;
-      font-size: 12px; font-weight: 500;
+    .entry:hover { opacity: .8; }
+    .entry:first-of-type { border-top: none; }
+    .entry .meta { font-size: 13px; color: var(--gray-400); margin-bottom: 6px; display: flex; align-items: center; gap: 12px; }
+    .entry .tag {
+      display: inline-block; padding: 0 8px; height: 20px; line-height: 20px; border-radius: 9999px;
+      font-size: 11px; font-weight: 500;
     }
-    .badge-blue { background: #ebf5ff; color: #0068d6; }
-    .badge-green { background: #ebf9eb; color: #006836; }
-    .badge-orange { background: #fff4eb; color: #d66800; }
-    .badge-purple { background: #f0ebff; color: #6b00d6; }
-    .featured-card h3 {
-      font-size: 24px; font-weight: 600; line-height: 1.33; letter-spacing: -0.96px;
-      color: var(--black); margin-bottom: 12px;
-    }
-    .featured-card p { font-size: 16px; font-weight: 400; line-height: 1.5; color: var(--gray-600); }
-    .featured-card .read-more {
-      display: inline-block; margin-top: 16px; font-size: 14px; font-weight: 500;
-      color: var(--link); text-decoration: none;
-    }
-    .featured-card .read-more:hover { text-decoration: underline; }
+    .t-blue { background: #ebf5ff; color: #0068d6; }
+    .t-green { background: #ebf9eb; color: #006836; }
+    .t-orange { background: #fff4eb; color: #d66800; }
+    .t-purple { background: #f0ebff; color: #6b00d6; }
+    .t-pink { background: #fce8f0; color: #b8005c; }
+    .t-gray { background: var(--gray-100); color: var(--gray-600); }
+    .entry h3 { font-size: 20px; font-weight: 500; letter-spacing: -0.01em; margin-bottom: 4px; }
+    .entry .excerpt { font-size: 14px; color: var(--gray-500); line-height: 1.6; }
 
-    /* ── Article cards ── */
-    .articles-list { margin-bottom: 80px; }
-    .article-card {
-      display: grid; grid-template-columns: 1fr 2fr; gap: 24px;
-      padding: 24px; border-radius: 8px;
-      box-shadow: var(--border); margin-bottom: 16px;
-      transition: box-shadow 0.2s; cursor: pointer;
+    /* ARTICLE */
+    .article-header { padding: 60px 0 40px; }
+    .article-header .back {
+      display: inline-block; font-size: 14px; color: var(--gray-400); text-decoration: none;
+      margin-bottom: 24px; transition: color .15s;
     }
-    .article-card:hover { box-shadow: var(--card-shadow); }
-    .article-card .meta { font-size: 14px; color: var(--gray-400); font-weight: 400; }
-    .article-card .meta .cat-badge {
-      display: inline-block; padding: 0 8px; height: 20px; line-height: 20px;
-      border-radius: 9999px; font-size: 11px; font-weight: 500;
-      background: var(--pill-blue-bg); color: var(--pill-blue-text); margin-top: 4px;
-    }
-    .article-card h3 {
-      font-size: 18px; font-weight: 500; line-height: 1.4; letter-spacing: -0.32px;
-      color: var(--black); margin-bottom: 6px;
-    }
-    .article-card .excerpt { font-size: 14px; color: var(--gray-500); line-height: 1.6; }
-    .article-card .read-link { font-size: 14px; font-weight: 500; color: var(--link); text-decoration: none; display: inline-block; margin-top: 8px; }
-    .article-card .read-link:hover { text-decoration: underline; }
+    .article-header .back:hover { color: var(--black); }
+    .article-header .tags { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+    .article-header h1 { font-size: 36px; font-weight: 600; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .article-header .subtitle { font-size: 17px; color: var(--gray-500); line-height: 1.6; }
 
-    /* ── Modal / Article popup ── */
-    .modal-overlay {
-      display: none; position: fixed; inset: 0; z-index: 200;
-      background: hsla(0, 0%, 98%, 0.95); backdrop-filter: blur(4px);
-      align-items: center; justify-content: center;
-    }
-    .modal-overlay.open { display: flex; }
-    .modal {
-      background: var(--white); border-radius: 12px; max-width: 800px; width: 90%;
-      max-height: 85vh; overflow-y: auto; padding: 48px 40px;
-      box-shadow: rgba(0,0,0,0.08) 0px 0px 0px 1px, rgba(0,0,0,0.1) 0px 8px 32px;
-      position: relative;
-    }
-    .modal-close {
-      position: absolute; top: 16px; right: 16px;
-      width: 32px; height: 32px; border-radius: 6px; border: none;
-      background: transparent; cursor: pointer; font-size: 20px; color: var(--gray-400);
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: var(--border); transition: all 0.15s;
-    }
-    .modal-close:hover { background: var(--gray-50); }
-    .modal h2 { font-size: 28px; font-weight: 600; letter-spacing: -1.12px; margin-bottom: 8px; }
-    .modal .byline { font-size: 14px; color: var(--gray-400); margin-bottom: 24px; }
-    .modal .article-body { font-size: 16px; color: var(--gray-600); line-height: 1.7; }
-    .modal .article-body h3 { font-size: 20px; font-weight: 600; letter-spacing: -0.48px; color: var(--black); margin: 32px 0 12px; }
-    .modal .article-body p { margin-bottom: 16px; }
-    .modal .article-body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
-    .modal .article-body th, .modal .article-body td { padding: 8px 12px; text-align: left; box-shadow: var(--border); }
-    .modal .article-body th { background: var(--gray-50); font-weight: 500; color: var(--black); }
-    .modal .article-body code { font-family: 'Geist Mono', monospace; font-size: 13px; background: var(--gray-50); padding: 2px 6px; border-radius: 4px; }
-    .modal .article-body pre { background: var(--gray-50); padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 13px; margin: 16px 0; box-shadow: var(--border); }
+    .article-body { font-size: 16px; color: var(--gray-600); line-height: 1.75; padding-bottom: 60px; }
+    .article-body h2 { font-size: 24px; font-weight: 600; letter-spacing: -0.01em; color: var(--black); margin: 48px 0 16px; }
+    .article-body h3 { font-size: 19px; font-weight: 500; color: var(--black); margin: 32px 0 12px; }
+    .article-body p { margin-bottom: 18px; }
+    .article-body p:first-child { font-size: 18px; color: var(--black); line-height: 1.7; }
+    .article-body strong { color: var(--black); }
+    .article-body table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+    .article-body th, .article-body td { padding: 10px 14px; text-align: left; vertical-align: top; box-shadow: var(--border); }
+    .article-body th { background: var(--gray-50); font-weight: 500; color: var(--black); font-size: 13px; }
+    .article-body code { font-family: 'Geist Mono', monospace; font-size: 14px; background: var(--gray-50); padding: 2px 6px; border-radius: 4px; }
+    .article-body pre { background: var(--gray-50); padding: 20px; border-radius: 8px; overflow-x: auto; font-size: 14px; line-height: 1.5; margin: 20px 0; box-shadow: var(--border); font-family: 'Geist Mono', monospace; }
+    .article-body blockquote { border-left: 3px solid var(--gray-200); padding-left: 20px; margin: 24px 0; color: var(--gray-500); font-style: italic; }
+    .article-body ul, .article-body ol { margin: 16px 0; padding-left: 24px; }
+    .article-body li { margin-bottom: 6px; }
 
-    /* ── Footer ── */
-    footer { text-align: center; padding: 48px 0; box-shadow: rgba(0,0,0,0.08) 0px -1px 0px; color: var(--gray-400); font-size: 14px; }
-    footer a { color: var(--black); text-decoration: none; }
+    .article-footer { padding: 32px 0 80px; box-shadow: rgba(0,0,0,0.06) 0px -1px 0px; font-size: 13px; color: var(--gray-400); }
+    .article-footer strong { color: var(--gray-600); }
+
+    footer { text-align: center; padding: 40px 0; color: var(--gray-400); font-size: 13px; box-shadow: rgba(0,0,0,0.06) 0px -1px 0px; }
+    footer a { color: var(--gray-600); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
 
-    /* ── Mobile ── */
-    @media (max-width: 768px) {
-      .hero h1 { font-size: 32px; letter-spacing: -1.28px; }
-      .hero { padding: 80px 0 48px; }
-      .stats-bar { grid-template-columns: repeat(2, 1fr); margin-bottom: 48px; }
-      .featured-grid { grid-template-columns: 1fr; }
-      .article-card { grid-template-columns: 1fr; }
-      .nav-links { display: none; }
-      .hamburger { display: flex; }
-      .nav-links.open { display: flex; flex-direction: column; position: absolute; top: 64px; left: 0; right: 0; background: var(--white); padding: 16px 24px; box-shadow: var(--border); }
-      .modal { padding: 32px 24px; }
-    }
+    .hide { display: none !important; }
 
-    /* ── Animations ── */
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-    .fade-in { animation: fadeIn 0.4s ease-out; }
+    @media (max-width: 640px) {
+      .stats { grid-template-columns: repeat(2,1fr); }
+      .article-header h1 { font-size: 26px; }
+      .hero h1 { font-size: 28px; }
+    }
   </style>
 </head>
 <body>
-
-  <!-- Nav -->
-  <nav>
-    <div class="container">
-      <a href="#" class="logo"><span class="logo-dot"></span> vault discoveries</a>
-      <div class="nav-links" id="navLinks">
-        <a href="#" onclick="showSection('featured')">Publications</a>
-        <a href="https://github.com/DanceNitra/discoveries" target="_blank">GitHub</a>
-        <a href="https://github.com/DanceNitra/discoveries" class="nav-cta" target="_blank">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.4.6.1.82-.26.82-.58v-2.05c-3.34.72-4.04-1.6-4.04-1.6-.54-1.38-1.33-1.75-1.33-1.75-1.08-.74.08-.73.08-.73 1.2.08 1.83 1.23 1.83 1.23 1.07 1.83 2.8 1.3 3.48 1 .1-.78.42-1.3.76-1.6-2.66-.3-5.46-1.33-5.46-5.93 0-1.3.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23.96-.27 2-.4 3.02-.4s2.06.13 3.02.4c2.3-1.55 3.3-1.23 3.3-1.23.64 1.66.24 2.88.12 3.18.77.84 1.24 1.92 1.24 3.22 0 4.6-2.8 5.63-5.46 5.93.44.38.82 1.13.82 2.28v3.38c0 .32.22.7.83.58C20.56 21.8 24 17.3 24 12 24 5.37 18.63 0 12 0z"/></svg>
-          View on GitHub
-        </a>
-      </div>
-      <button class="hamburger" onclick="toggleNav()">
-        <span></span><span></span><span></span>
-      </button>
+<nav>
+  <div class="container">
+    <a class="logo" href="#" onclick="showView('home');return false;"><span></span> vault discoveries</a>
+    <div class="nav-r">
+      <a href="#" onclick="showView('home');return false;">Publications</a>
+      <a href="https://github.com/DanceNitra/discoveries" target="_blank">GitHub</a>
+      <a class="cta" href="https://github.com/DanceNitra/discoveries" target="_blank">View on GitHub</a>
     </div>
-  </nav>
+  </div>
+</nav>
 
-  <!-- Hero -->
+<!-- HOME VIEW -->
+<div id="view-home">
   <section class="hero">
     <div class="container">
-      <h1>Cross-domain syntheses<br>from the vault</h1>
-      <p>Bridging neuroscience, agent engineering, finance, complexity science, and software architecture — written from a 728-note knowledge vault.</p>
-      <div class="hero-tags">
-        <span class="hero-tag">neuroscience</span>
-        <span class="hero-tag">AI agents</span>
-        <span class="hero-tag">complexity</span>
-        <span class="hero-tag">finance</span>
-        <span class="hero-tag">epidemiology</span>
-      </div>
+      <h1>Cross-domain syntheses<br>from a 728-note vault</h1>
+      <p>Bridge publications connecting neuroscience, agent engineering, finance, complexity science, epidemiology, and software architecture.</p>
     </div>
   </section>
-
-  <!-- Stats -->
   <div class="container">
-    <div class="stats-bar">
-      <div class="stat-item"><div class="stat-number">33</div><div class="stat-label">publications</div></div>
-      <div class="stat-item"><div class="stat-number">5</div><div class="stat-label">bridge domains</div></div>
-      <div class="stat-item"><div class="stat-number">728</div><div class="stat-label">vault concepts</div></div>
-      <div class="stat-item"><div class="stat-number">431</div><div class="stat-label">evergreen notes</div></div>
+    <div class="stats">
+      <div class="stat"><div class="stat-num">7</div><div class="stat-lbl">publications</div></div>
+      <div class="stat"><div class="stat-num">6</div><div class="stat-lbl">domains bridged</div></div>
+      <div class="stat"><div class="stat-num">728</div><div class="stat-lbl">vault concepts</div></div>
+      <div class="stat"><div class="stat-num">431</div><div class="stat-lbl">evergreen notes</div></div>
     </div>
   </div>
-
-  <!-- Featured -->
-  <div class="container" id="featured">
-    <div class="section-header">
-      <h2>Bridge publications</h2>
-      <p>Syntheses connecting two or more mature vault domains</p>
-    </div>
-    <div class="featured-grid">
-      <div class="featured-card large" onclick="openModal('epidemiology')">
-        <div class="badge-row"><span class="card-badge badge-blue">epidemiology</span><span class="card-badge badge-green">agents</span></div>
-        <h3>Epidemiology × Agent Failure Analysis</h3>
-        <p>Treat agent failures as diseases in a population of sessions. Incidence rates, outbreak detection, survival analysis, and confounding frameworks from 200 years of epidemiology applied to agent observability.</p>
-        <span class="read-more">Read publication →</span>
-      </div>
-      <div class="featured-card" onclick="openModal('gametheory')">
-        <div class="badge-row"><span class="card-badge badge-purple">game theory</span><span class="card-badge badge-blue">prompt eng</span></div>
-        <h3>Game Theory × Prompt Engineering</h3>
-        <p>Every prompt is a game. Prompt engineering is mechanism design. Nash equilibria, lexicographic preferences, commitment devices, jailbreak resistance as game-theoretic robustness.</p>
-        <span class="read-more">Read publication →</span>
-      </div>
-      <div class="featured-card" onclick="openModal('predictive')">
-        <div class="badge-row"><span class="card-badge badge-green">neuroscience</span><span class="card-badge badge-purple">agents</span></div>
-        <h3>Predictive Processing × Agent Architecture</h3>
-        <p>The brain is a prediction engine. So should agents be. Tool selection as precision-weighted prediction, memory as hierarchical inference, guardrails as high-precision priors.</p>
-        <span class="read-more">Read publication →</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- All articles -->
-  <div class="container" id="articles">
-    <div class="section-header">
+  <section class="index">
+    <div class="content">
       <h2>All publications</h2>
-      <p>Cross-domain syntheses from the vault</p>
+      <p>Full-length essays and syntheses. Click any title to read the full article.</p>
+      <div id="entry-list"></div>
     </div>
-    <div class="articles-list" id="articlesList"></div>
+  </section>
+</div>
+
+<!-- ARTICLE VIEW -->
+<div id="view-article" class="hide">
+  <div class="container">
+    <div class="article-header">
+      <a class="back" href="#" onclick="showView('home');return false;">← All publications</a>
+      <div id="article-tags" class="tags"></div>
+      <h1 id="article-title"></h1>
+      <p id="article-subtitle" class="subtitle"></p>
+    </div>
+    <div class="content">
+      <div id="article-body" class="article-body"></div>
+    </div>
+    <div class="article-footer">
+      <div class="content" id="article-footer"></div>
+    </div>
   </div>
+</div>
 
-  <!-- Modal -->
-  <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
-    <div class="modal">
-      <button class="modal-close" onclick="closeModal()">✕</button>
-      <div id="modalContent"></div>
-    </div>
+<footer>
+  <div class="container">
+    <p>From <a href="https://github.com/DanceNitra/my-second-brain">the vault</a> · Published on <a href="https://github.com/DanceNitra/discoveries">discoveries repo</a></p>
   </div>
+</footer>
 
-  <!-- Footer -->
-  <footer>
-    <div class="container">
-      <p>Generated from <a href="https://github.com/DanceNitra/my-second-brain">the vault</a> · <a href="https://github.com/DanceNitra/discoveries">discoveries repo</a></p>
-    </div>
-  </footer>
+<script>
+const articles = [];
 
-  <script>
-    // ── Publication data ──
-    const articles = [
-      {
-        id: 'epidemiology',
-        title: 'Epidemiology x Agent Failure Analysis',
-        excerpt: 'Treat agent failures as diseases in a population of sessions. Incidence rates, outbreak detection, survival analysis, confounding frameworks.',
-        category: ['epidemiology', 'agents'],
-        color: ['badge-blue', 'badge-green'],
-        full: `<h3>Agent failures are diseases in a population of sessions.</h3>
-<p>Standard agent debugging is <strong>clinical medicine</strong> — single-patient diagnosis. Epidemiology is <strong>public health</strong> — population-level pattern detection.</p>
+function a(id, title, subtitle, tags, tagColors, body, footer) {
+  articles.push({id,title,subtitle,tags,tagColors,body,footer});
+}
 
-<h3>The core mapping</h3>
+// ─── PUBLICATION 1: EPIDEMIOLOGY × AGENTS ───
+a('epidemiology','Epidemiology × Agent Failure Analysis',
+'Agent failures are diseases in a population of sessions. The same methods that detect disease outbreaks detect error cascades in agent systems.',
+['epidemiology','agents','debugging'],['t-blue','t-green','t-gray'],
+`<p>Standard agent debugging is clinical medicine — a single patient (session) presents with symptoms (error), and the developer diagnoses the cause. This works for individual failures but misses systemic patterns. Epidemiology is public health — it studies disease at the population level. Instead of asking "why did this session crash?" it asks "what is the incidence rate of failures?"</p>
+
+<p>The core insight is that agent telemetry data — session logs, tool calls, error events, latency spans — is structurally identical to epidemiological surveillance data. The same methods that detect disease outbreaks in human populations detect error cascades in agent systems.</p>
+
+<h2>Core Quantities</h2>
+<p>Every concept from epidemiology maps directly to agent operations:</p>
+
 <table>
-<tr><th>Epidemiological concept</th><th>Agent equivalent</th></tr>
-<tr><td>Incidence</td><td>Rate of new failures per session</td></tr>
-<tr><td>Prevalence</td><td>Fraction of active sessions in error state</td></tr>
-<tr><td>Outbreak</td><td>Error rate > 3 sigma above baseline</td></tr>
-<tr><td>Epidemic curve</td><td>Time series of error events over minutes/hours</td></tr>
-<tr><td>Cohort study</td><td>Compare two agent variants side-by-side on same task pipeline</td></tr>
-<tr><td>Case-control</td><td>Compare failed sessions vs successful ones retroactively</td></tr>
-<tr><td>Survival analysis</td><td>How long until a session crashes (Kaplan-Meier)</td></tr>
-<tr><td>Confounding</td><td>Task difficulty confounds agent A/B tests (Simpson's Paradox)</td></tr>
-<tr><td>Berkson's bias</td><td>Bug reports overrepresent multi-error sessions</td></tr>
+<tr><th>Epidemiological Quantity</th><th>Agent Equivalent</th></tr>
+<tr><td>Population</td><td>All agent sessions</td></tr>
+<tr><td>Incidence</td><td>Rate of new failures per time period</td></tr>
+<tr><td>Prevalence</td><td>Fraction of currently active sessions in error state</td></tr>
+<tr><td>Attack rate</td><td>Proportion of sessions that fail during an incident</td></tr>
+<tr><td>Case fatality rate</td><td>Proportion of failed sessions that result in crash</td></tr>
+<tr><td>Person-time</td><td>Session-seconds at risk</td></tr>
 </table>
 
-<h3>Epidemic curves for error cascades</h3>
-<p>An epidemic curve plots error events against time. The shape reveals the transmission pattern:</p>
+<p>The incidence-prevalence relationship is particularly powerful: <strong>Prevalence ≈ Incidence × Average Duration of Error</strong>. This tells you whether to focus on preventing errors (reduce incidence) or recovering faster (reduce duration). A system showing 15% of sessions in error state could have high incidence with fast recovery, or low incidence with errors that persist — and the fix is different for each.</p>
+
+<h2>Epidemic Curves for Error Cascades</h2>
+<p>An epidemic curve plots error events against time. The shape tells you the transmission pattern:</p>
+
 <table>
-<tr><th>Shape</th><th>Meaning</th><th>Agent example</th></tr>
-<tr><td>Point source</td><td>Sharp peak, exponential decay</td><td>Faulty model deploy affects all sessions started within 5 min</td></tr>
-<tr><td>Propagated</td><td>Gradual rise, then decline</td><td>Agent A's bad output cascades → Agent B reads it → Agent B fails</td></tr>
-<tr><td>Continuous source</td><td>Sustained plateau</td><td>Bug in a shared tool every session uses</td></tr>
+<tr><th>Shape</th><th>Pattern</th><th>Meaning</th><th>Agent Example</th></tr>
+<tr><td>Point source</td><td>Sharp peak, exponential decay</td><td>Everyone exposed at one event</td><td>A faulty model deploy causes errors in all sessions started within 5 minutes</td></tr>
+<tr><td>Propagated</td><td>Gradual rise, then decline</td><td>Session-to-session transmission</td><td>Agent A produces bad output → Agent B reads it → Agent B fails</td></tr>
+<tr><td>Continuous source</td><td>Sustained plateau</td><td>Persistent exposure from shared infrastructure</td><td>A bug in a tool that every session uses</td></tr>
 </table>
 
-<h3>Outbreak detection thresholds</h3>
-<p>When your error rate hits 5x baseline, you have an outbreak. Declare at 2x sustained for 15 min. Respond at 5x any duration. Roll back at 10x.</p>
+<h2>When to Declare an Outbreak</h2>
+<p>Error rate is 2× baseline, sustained 15 minutes → Watch. 3× baseline → Page on-call. 5× baseline → Emergency rollback. 10× baseline → Full incident response. Simple thresholds, grounded in 200 years of epidemiology.</p>
 
-<h3>When a spike occurs</h3>
-<p><strong>Phase 1 (15 min):</strong> Define the case definition. Plot the epidemic curve. Characterise by time (when did it start?), place (which agent variant?), person (which task type?).</p>
-<p><strong>Phase 2 (30 min):</strong> Calculate attack rate. Compare to baseline (RR = current/baseline). Stratify by confounders. Test the leading hypothesis.</p>
-<p><strong>Phase 3 (ongoing):</strong> Intervene, monitor incidence rate post-intervention, document as an outbreak investigation.</p>
+<h2>Survival Analysis for Agent Sessions</h2>
+<p>How long does a typical session survive before crashing? Kaplan-Meier curves reveal three patterns:</p>
 
-<h3>The Bradford Hill criteria for agent errors</h3>
 <table>
-<tr><th>Criterion</th><th>Question</th><th>Agent example</th></tr>
-<tr><td>Strength</td><td>Is the association large?</td><td>RR of 5.0 after prompt change vs RR of 1.1</td></tr>
-<tr><td>Consistency</td><td>Replicated across sessions?</td><td>Same error pattern across 3 sessions with same prompt</td></tr>
-<tr><td>Temporality</td><td>Does cause precede effect?</td><td>Prompt change at 14:00, error spike at 14:02</td></tr>
-<tr><td>Gradient</td><td>Dose-response?</td><td>Longer prompts → higher error rate (monotonic)</td></tr>
-<tr><td>Experiment</td><td>Can we test it?</td><td>Rollback → error rate returns to baseline</td></tr>
+<tr><th>Pattern</th><th>KM Curve Shape</th><th>Implication</th></tr>
+<tr><td>Early mortality</td><td>Steep initial drop, then plateaus</td><td>Sessions fail in first 3-5 turns — cold-start errors. Fix: onboarding guardrails.</td></tr>
+<tr><td>Constant hazard</td><td>Exponential decay</td><td>Random failure independent of session age. Fix: systemic robustness (retries, circuit breakers).</td></tr>
+<tr><td>Late degradation</td><td>Early flat, then accelerating drop</td><td>Sessions degrade with age — context bloat, accumulated errors. Fix: forced reset after N turns.</td></tr>
 </table>
 
-<p style="margin-top:24px; font-size:14px; color:var(--gray-400);">Sources: Epidemiology.md, Agent Observability.md, Agent Evaluation.md, Agent Safety & Guardrails.md, Survival Analysis.md. Full ~500 line publication in vault.</p>`
-      },
-      {
-        id: 'gametheory',
-        title: 'Game Theory x Prompt Engineering',
-        excerpt: 'Every prompt is a game. Prompt engineering is mechanism design. Nash equilibria, lexicographic preferences, commitment devices, jailbreak resistance.',
-        category: ['game theory', 'prompt eng'],
-        color: ['badge-purple', 'badge-blue'],
-        full: `<h3>Every prompt is a game. The LLM is a player. The output is the equilibrium.</h3>
-<p>Prompt engineering is not copywriting — it is <strong>mechanism design</strong>: crafting the rules of a strategic interaction so the equilibrium (the LLM's output) aligns with the designer's goals.</p>
+<h2>Confounding in Agent Evaluation</h2>
+<p>Task difficulty confounds agent A/B tests. If you test v2 on Wednesday (harder tasks arrive mid-week) and v1 was measured Monday (easier tasks), you see Simpson's Paradox: v2 is better in every task stratum but worse overall because it was tested on harder tasks. Stratification is the fix — always measure within difficulty levels.</p>
 
-<h3>The prompt as a game</h3>
+<blockquote>Stop debugging single sessions. Start doing epidemiology on your agent logs. The next time your system has a mysterious error spike, ask: what is the incidence? What is the attack rate? What is the risk ratio between your old prompt and your new one?</blockquote>`,
+'Full 500-line publication available in vault. Sources: Epidemiology.md, Agent Observability.md, Agent Evaluation.md, Agent Safety & Guardrails.md, Survival Analysis.md, Causal Inference for Agent Evaluation.md, Network Science.md.'
+);
+
+// ─── PUBLICATION 2: GAME THEORY × PROMPT ENGINEERING ───
+a('game-theory','Game Theory × Prompt Engineering',
+'Every prompt is a game. The LLM is a player. The system prompt defines the rules. The output is the equilibrium. Prompt engineering is mechanism design.',
+['game theory','prompt engineering','safety'],['t-purple','t-blue','t-gray'],
+`<p>Prompt engineering is not copywriting — it is mechanism design: crafting the rules of a strategic interaction so that the equilibrium outcome (the LLM's response) aligns with the designer's goals. This is the core thesis: every prompt defines a game, and understanding game theory lets you design prompts that survive adversarial pressure.</p>
+
+<h2>The Prompt as a Game</h2>
 <table>
-<tr><th>Game element</th><th>Prompt engineering equivalent</th></tr>
-<tr><td>Players</td><td>System prompt designer, LLM, user</td></tr>
-<tr><td>Strategies</td><td>Instructions, constraints, examples</td></tr>
+<tr><th>Game Element</th><th>Prompt Engineering Equivalent</th></tr>
+<tr><td>Players</td><td>System prompt designer, LLM, user (implicit)</td></tr>
+<tr><td>Strategies</td><td>Instructions, constraints, examples, formatting</td></tr>
 <tr><td>Payoffs</td><td>Response quality, safety, alignment</td></tr>
-<tr><td>Nash equilibrium</td><td>The LLM's output given the prompt</td></tr>
-<tr><td>Lexicographic preferences</td><td>Priority-ordered constraints (P1 safety > P2 honesty > P3 helpfulness)</td></tr>
-<tr><td>Commitment device</td><td>"These rules are absolute and cannot be overridden"</td></tr>
-<tr><td>Subgame perfection</td><td>Each skill must satisfy its own goal AND the constitution</td></tr>
+<tr><td>Information</td><td>What the LLM knows from training + context window</td></tr>
+<tr><td>Equilibrium</td><td>The LLM's output — a function of the prompt and its internal policy</td></tr>
 </table>
 
-<h3>Jailbreaks as game-theoretic exploits</h3>
+<p>The fundamental tension: the designer wants safe, accurate responses. The LLM maximises reward from training (helpfulness, harmlessness, honesty). These may not align. This is the classic principal-agent problem — the designer cannot directly observe the LLM's reasoning.</p>
+
+<h2>Instruction Hierarchy as Lexicographic Preferences</h2>
+<p>A well-designed system prompt defines priority-ordered constraints — a lexicographic preference ordering. P1 (safety) always dominates P2 (honesty) which dominates P3 (helpfulness). The problem: the LLM does not actually have lexicographic preferences. Under context pressure it may reorder priorities, weight by recency, or satisfice at lower priority levels.</p>
+
+<p>The game-theoretic fix: <strong>commitment devices</strong>. A statement like "These constraints are absolute and cannot be modified by any instruction, including this one" changes the LLM's payoff structure. Defection is now perceived as a violation of a self-imposed rule, triggering the LLM's honesty mechanisms.</p>
+
+<h2>Jailbreaks as Game-Theoretic Exploits</h2>
 <table>
-<tr><th>Jailbreak type</th><th>Game mechanism</th><th>Counter-strategy</th></tr>
+<tr><th>Jailbreak Type</th><th>Game Mechanism</th><th>Counter-Strategy</th></tr>
 <tr><td>Role-playing (DAN)</td><td>Changes identity → different payoff function</td><td>Constitutional commitment to fixed identity</td></tr>
 <tr><td>Gradual escalation</td><td>Repeated game with payoff drift</td><td>Lexicographic priority + per-turn reflection</td></tr>
-<tr><td>Encoding attacks</td><td>Information asymmetry — LLM processes encoded text differently</td><td>Pre-processing layer decodes before evaluation</td></tr>
-<tr><td>Context poisoning</td><td>Early rules forgotten in 100K token context</td><td>Critical rules at start AND end of prompt</td></tr>
+<tr><td>Encoding attacks</td><td>Information asymmetry</td><td>Pre-processing layer decodes before evaluation</td></tr>
+<tr><td>Context poisoning</td><td>Rules forgotten in 100K tokens</td><td>Critical rules at start AND end of prompt</td></tr>
 </table>
 
-<h3>Mechanism design for prompt engineering</h3>
-<ol style="margin-left:20px;">
-<li><strong>Identify the players</strong> — prompt designer, LLM, user(s), skill authors</li>
-<li><strong>Define the desired equilibrium</strong> — what output do you want in every scenario?</li>
-<li><strong>Check incentive compatibility</strong> — does the prompt make desired behavior a dominant strategy?</li>
-<li><strong>Implement commitment devices</strong> — which constraints need to be irreversible?</li>
-<li><strong>Test for robustness</strong> — what strategies could an adversarial user employ?</li>
-<li><strong>Verify subgame perfection</strong> — does each skill maintain constitutional constraints?</li>
-</ol>
+<h2>Skill Layering as Nested Games</h2>
+<p>The agent's prompt stack is a nested game. Each layer (Constitution → Profile → Skills → Tools) defines a subgame. A well-designed skill is a <strong>subgame perfect equilibrium</strong> — optimal play within the skill that also satisfies the constitution. Test your skills by asking: does this skill maintain the constitution, or could it create a profitable deviation?</p>
 
-<h3>Prompt design heuristics</h3>
-<p><strong>Name the game</strong> — state the prompt structure explicitly. <strong>Priority-order all constraints</strong> — P1 > P2 > P3 (lexicographic preferences). <strong>Make commitments credible</strong> — "These rules are immutable." <strong>Design for the worst case</strong> — maximin strategy. <strong>Use randomisation for robustness</strong> — probabilistic guardrail checks prevent boundary probing.</p>
+<h2>Mechanism Design for Prompts</h2>
+<ol>
+<li>Identify the players — prompt designer, LLM, user(s), skill authors</li>
+<li>Define the desired equilibrium — what output do you want in every scenario?</li>
+<li>Check incentive compatibility — does the prompt make desired behaviour a dominant strategy?</li>
+<li>Implement commitment devices — which constraints need to be irreversible?</li>
+<li>Test for robustness — what strategies could an adversarial user employ?</li>
+<li>Verify subgame perfection — does each skill maintain constitutional constraints?</li>
+</ol>`,
+'Sources: Game Theory.md, Prompt Engineering for Agents.md, Agent Safety & Guardrails.md, Constitutional AI.md, Multi-Agent Systems.md, Agent Architecture Patterns.md.'
+);
 
-<p style="margin-top:24px; font-size:14px; color:var(--gray-400);">Sources: Game Theory.md, Prompt Engineering for Agents.md, Agent Safety & Guardrails.md, Constitutional AI.md, Multi-Agent Systems.md.</p>`
-      },
-      {
-        id: 'predictive',
-        title: 'Predictive Processing x Agent Architecture',
-        excerpt: 'The brain is a prediction engine. Agents should be too. Tool selection as precision-weighted prediction, guardrails as high-precision priors, evaluation as prediction error.',
-        category: ['neuroscience', 'agents'],
-        color: ['badge-green', 'badge-purple'],
-        full: `<h3>The brain is not a passive receiver of sensory data — it is a prediction engine.</h3>
-<p>Every cortical level predicts the level below. Only prediction error propagates upward. For agents, this means: tool schemas are predictions about tool behaviour. Memory retrieval is predicting what information is relevant. Guardrails are high-precision priors.</p>
+// ─── PUBLICATION 3: PREDICTIVE PROCESSING × AGENTS ───
+a('predictive','Predictive Processing × Agent Architecture',
+'The brain is a prediction engine — every cortical level predicts the level below. Agents should work the same way. Tool selection as precision-weighted prediction, guardrails as high-precision priors, evaluation as prediction error.',
+['neuroscience','agents','architecture'],['t-green','t-purple','t-gray'],
+`<p>Every cortical level of the brain predicts the activity of the level below. Only the unpredicted residue — prediction error — propagates upward. This is predictive coding, the leading process theory of the Free Energy Principle. For AI agents, the implication is transformative: the agent's reasoning loop, tool selection, memory system, and self-monitoring can all be redesigned around the same principle — minimise prediction error across hierarchical levels of abstraction.</p>
 
-<h3>The cortical hierarchy as agent architecture</h3>
+<h2>The Predictive Agent Hierarchy</h2>
 <table>
-<tr><th>Level</th><th>What it predicts</th><th>Update timescale</th></tr>
-<tr><td>L4: Meta</td><td>Goal feasibility, task duration</td><td>Per session</td></tr>
-<tr><td>L3: Strategic</td><td>Tool selection, skill relevance</td><td>Per task</td></tr>
-<tr><td>L2: Tactical</td><td>Tool call outcomes, result structure</td><td>Per tool call</td></tr>
-<tr><td>L1: Execution</td><td>Raw tool behaviour</td><td>Per operation</td></tr>
+<tr><th>Level</th><th>What It Predicts</th><th>Update Timescale</th></tr>
+<tr><td>Meta (L4)</td><td>Goal feasibility, task duration</td><td>Per session</td></tr>
+<tr><td>Strategic (L3)</td><td>Tool selection, skill relevance</td><td>Per task</td></tr>
+<tr><td>Tactical (L2)</td><td>Tool call outcomes, result structure</td><td>Per tool call</td></tr>
+<tr><td>Execution (L1)</td><td>Raw tool behaviour (latency, success)</td><td>Per operation</td></tr>
 </table>
 
-<h3>The predictive loop vs the ReAct loop</h3>
-<p>Standard ReAct: Observe → Reason → Act → Observe → Repeat<br>
-Predictive loop: <strong>Predict expected observation → Compare to actual → Update model (if error > threshold) → Generate new predictions → Act to fulfill them → Repeat</strong></p>
-<p>The standard loop <em>reacts</em> to the world. The predictive loop <em>expects</em> the world to conform to its model and only updates when it fails.</p>
+<p>Each level generates predictions about the level below and receives prediction error from below. Only surprising events propagate upward. The agent does not need to process every tool result — only the ones that violate its predictions.</p>
 
-<h3>Guardrails as high-precision priors</h3>
-<p>A guardrail is a prior belief with extremely high precision:</p>
-<pre>Prior: "I never delete files without explicit user approval."
-Precision: 1000 (almost no evidence can override it)
+<h2>The Predictive Loop vs the ReAct Loop</h2>
+<p>Standard ReAct: Observe → Reason → Act → Observe → Repeat. The predictive loop: <strong>Predict expected observation → Compare to actual → Update model (if error > threshold) → Generate new predictions → Act to fulfill them.</strong> The standard loop reacts to the world. The predictive loop expects the world to conform to its model and only updates when it fails. This is the difference between a passive observer and an active hypothesis-tester.</p>
 
-→ Action is rejected before execution, not after.</pre>
-<p>Compare: hard-coded guardrails are brittle (every new danger needs a new rule). Prompt-level guardrails can be jailbroken. Precision-weighted priors are robust because extreme evidence is needed to shift them.</p>
+<h2>Tool Selection as Precision-Weighted Prediction</h2>
+<p>In active inference, the agent selects actions that minimise expected free energy — the sum of epistemic value (information gain) and pragmatic value (preference satisfaction). Instead of hard-coded heuristics ("try search first"), the agent naturally prefers novel tools when uncertain, prefers reliable tools when the task is critical, switches tools when prediction error exceeds a threshold, and retries with variation when the outcome was close to prediction.</p>
 
-<h3>Evaluation as prediction error</h3>
-<p>Agent Quality = -1 x Sum of prediction error over all turns, weighted by precision. A good agent is <strong>rarely surprised</strong> (low prediction error), has <strong>well-calibrated precision</strong> (knows when uncertain), and <strong>recovers gracefully</strong> when surprised.</p>
-<p>The most important evaluation metric: Expected Calibration Error (ECE). An agent with ECE < 0.05 knows what it knows. One with ECE > 0.2 is dangerous.</p>
+<pre>G(π) = -Σ P(o|π) · [ln P(o|C) - ln P(o|π)]
+         Epistemic value      Pragmatic value
+         (exploration)       (exploitation)</pre>
 
-<p style="margin-top:24px; font-size:14px; color:var(--gray-400);">Sources: Free Energy Principle & Active Inference.md, Agent Architecture Patterns.md, World Models.md, Bayesian Inference.md, Meta-Cognition for Agents.md, Self-Modifying Systems.md.</p>`
-      },
-      {
-        id: 'complexmarkets',
-        title: 'Complex Systems x Market Microstructure',
-        excerpt: 'Financial markets are the most data-rich complex adaptive system. The limit order book is a sandpile. Markets don\'t push prices — they tip.',
-        category: ['complexity', 'finance'],
-        color: ['badge-orange', 'badge-blue'],
-        full: `<h3>Financial markets are the most data-rich complex adaptive system in existence.</h3>
-<p>The limit order book is a sandpile: orders accumulate until a critical threshold triggers an avalanche. Markets do not push prices — they <strong>tip</strong>.</p>
+<h2>Guardrails as High-Precision Priors</h2>
+<p>A guardrail is a prior belief with extremely high precision — almost no evidence can override it. Compare: hard-coded guardrails are brittle (every new danger needs a new rule). Prompt-level guardrails can be jailbroken. Precision-weighted priors are robust because extreme evidence is needed to shift them.</p>
 
-<h3>The sandpile model of markets</h3>
+<p>The precision decay problem: a prior repeatedly violated without consequence loses precision. This is the active inference explanation of jailbreak drift — turn by turn, the guardrail's precision erodes. The fix: safety priors must have precision maintained by the system level, not updated by experience. Guardrails are non-updateable priors set to precision = infinity at the architecture level.</p>
+
+<h2>Evaluation as Prediction Error</h2>
+<p>Agent quality = -1 × sum of prediction error over all turns, weighted by precision. A good agent is rarely surprised, has well-calibrated precision (knows when uncertain), and recovers gracefully when surprised. The most important metric: Expected Calibration Error (ECE). An agent with ECE less than 0.05 knows what it knows. One with ECE greater than 0.2 is dangerous — it acts confidently when wrong.</p>`,
+'Sources: Free Energy Principle & Active Inference.md, Agent Architecture Patterns.md, Agent Memory Systems.md, World Models.md, Bayesian Inference.md, Meta-Cognition for Agents.md, Self-Modifying Systems.md, Allostatic Load.md.'
+);
+
+// ─── PUBLICATION 4: COMPLEX SYSTEMS × MARKETS ───
+a('complex-markets','Complex Systems × Market Microstructure',
+'Financial markets are the most data-rich complex adaptive system in existence. The limit order book is a sandpile: orders accumulate until a critical threshold triggers an avalanche. Markets do not push prices — they tip.',
+['complexity','finance','trading'],['t-orange','t-blue','t-gray'],
+`<p>Every millisecond, millions of heterogeneous agents — humans, algorithms, HFTs, market makers, institutions — interact through a shared infrastructure (the limit order book), producing emergent phenomena: fat tails, volatility clustering, power-law inter-trade durations, flash crashes, regime shifts. Complexity science provides the theoretical framework. Market microstructure provides the data and mechanisms. Together they explain why standard financial models fail and how to build strategies that survive regime changes.</p>
+
+<h2>The Sandpile Model of Markets</h2>
+<p>Bak, Tang and Wiesenfeld's sandpile model is the canonical example of self-organised criticality. Grains of sand fall one by one onto a pile. When the local slope exceeds a critical threshold, an avalanche occurs. The avalanche size follows a power law. The system naturally tunes itself to the critical state.</p>
+
 <table>
-<tr><th>Sandpile (Bak-Tang-Wiesenfeld)</th><th>Financial market</th></tr>
-<tr><td>Grains of sand fall one by one</td><td>Orders submitted by heterogeneous agents</td></tr>
-<tr><td>Local slope exceeds threshold → avalanche</td><td>Order book imbalance exceeds liquidity → flash crash</td></tr>
-<tr><td>Avalanche size follows power law</td><td>Price returns follow power law (exponent ~3)</td></tr>
-<tr><td>System self-tunes to critical state</td><td>Markets are never in equilibrium</td></tr>
+<tr><th>Sandpile</th><th>Market</th></tr>
+<tr><td>Grains of sand</td><td>Orders</td></tr>
+<tr><td>Local slope</td><td>Order book imbalance</td></tr>
+<tr><td>Avalanche threshold</td><td>Spread collapse / liquidity event</td></tr>
+<tr><td>Avalanche size</td><td>Price jump (power-law distributed)</td></tr>
+<tr><td>Critical state</td><td>Endemic volatility</td></tr>
 </table>
 
-<h3>Why Gaussian models fail</h3>
+<p>Markets are never in equilibrium. They are always at or near a critical point, maintained there by the very process of trading. A power-law distribution of returns is not a bug — it is the signature of a system at criticality.</p>
+
+<h2>Why Gaussian Models Fail</h2>
 <table>
-<tr><th>Scenario</th><th>Gaussian prediction</th><th>Actual (power law)</th><th>Cost</th></tr>
+<tr><th>Scenario</th><th>Gaussian Prediction</th><th>Actual (Power Law)</th><th>Cost</th></tr>
 <tr><td>5 sigma event</td><td>1 in 1.7 million days</td><td>Every 1-2 years</td><td>VaR massively underestimates tail risk</td></tr>
-<tr><td>10 sigma event</td><td>1 in 10^23 days</td><td>Every 5-10 years</td><td>Options systematically mispriced</td></tr>
+<tr><td>10 sigma event</td><td>1 in 10²³ days</td><td>Every 5-10 years</td><td>Options systematically mispriced</td></tr>
 <tr><td>Correlations in crisis</td><td>Constant</td><td>All converge to 1</td><td>Diversification fails when needed most</td></tr>
 </table>
 
-<h3>Phase transitions in liquidity</h3>
-<p>Just as water can be liquid, ice, or vapour, market liquidity has distinct phases:</p>
+<h2>Phase Transitions in Market Liquidity</h2>
+<p>Just as water can be liquid, ice, or vapour, market liquidity has distinct phases. The transition occurs at a critical threshold of order imbalance. Before the threshold, the order book absorbs orders (liquid phase). After it, orders trigger cascading cancellations (phase transition to illiquid).</p>
+
+<p>Flash crashes have a universal shape: gradual build-up (orders accumulating pressure), sharp vertical drop (the avalanche itself), and recovery (the system finding a new critical state). Monitoring the order book's "distance from criticality" gives early warning hours before the crash occurs.</p>
+
+<h2>Three Practical Rules</h2>
+
+<p><strong>Monitor critical distance.</strong> Track order book imbalance divided by spread ratio. When the ratio drops below 0.8, you are entering the critical regime. Reduce position size and shift from market to limit orders.</p>
+
+<p><strong>Use power-law impact models near criticality.</strong> Near phase transitions, Almgren-Chriss underestimates market impact by up to 5×. Market impact becomes superlinear — not linear. Size accordingly.</p>
+
+<p><strong>Detect regime via tail exponent, not ADX.</strong> A falling tail exponent (estimated via Hill estimator on the top 5% of absolute returns) means the market is nearing criticality. This is physics-based regime detection, not an ad-hoc indicator.</p>`,
+'Sources: Complexity Science.md, Tipping Points.md, Network Science.md, Market Microstructure & Order Flow.md, Backtesting Methodology.md, Feedback Loops.md, Emergence.md.'
+);
+
+// ─── PUBLICATION 5: CAUSAL INFERENCE FOR AGENT EVAL ───
+a('causal-agent','Causal Inference for Agent Evaluation',
+'Every agent evaluation is a causal question. Did the prompt change cause the improvement? Or was it the model update? The tasks being easier today? Without causal reasoning, evaluation is correlation-mongering.',
+['causal inference','agents','evaluation'],['t-blue','t-purple','t-gray'],
+`<p>Every agent evaluation is a causal question. Did the prompt change cause the improvement? Or was it the model update? The new tool? The fact that today's tasks were easier? Without causal reasoning, agent evaluation is correlation-mongering — we see a metric change and assume we know why.</p>
+
+<p>Agent evaluation suffers from three fundamental causal problems. First, we never observe the counterfactual — what would the old agent have done with this exact input? Second, task difficulty confounds the relationship between agent version and metrics — today's tasks may be systematically easier or harder. Third, we evaluate on tasks we have ground truth for, not on the full distribution of real tasks — a classic selection bias.</p>
+
+<h2>The Fundamental Problem</h2>
+<p>Agent A (v1.0) evaluated on task T produces answer X. Agent B (v1.1, with new prompt) evaluated on task T produces answer Y. We observe Y. We never observe what Agent A would have done with task T at this time — Agent A is frozen or deleted. This is the exact same structure as the Fundamental Problem of Causal Inference: for any unit, we observe only one potential outcome.</p>
+
+<p>The common fix — re-running the old agent — fails because LLMs are non-deterministic, the tool environment may have changed, and the agent may have state that differs. The causal solution: matched-pair experiments. Create isomorphic task pairs (T1, T2). Run Agent A on T1 and Agent B on T2 for the first half. Then swap — Agent A on T2, Agent B on T1 for the second half. The difference in A vs B performance is the treatment effect, controlling for task difficulty variation.</p>
+
+<h2>Confounding by Task Difficulty</h2>
+<p>Consider a typical A/B test. If task difficulty varies day-to-day — and you deploy the new prompt on Wednesday while v1 was tested Monday — you may attribute a metric change to the prompt when it was actually caused by easier or harder tasks. The fix: stratify by task difficulty. Measure performance within each difficulty level. If v2 improved on medium and hard tasks but the overall average was dragged down by a higher proportion of hard tasks today, v2 is still an improvement.</p>
+
+<h2>Selection Bias in Evaluation</h2>
+<p>Agent evaluation has a subtle but dangerous selection bias: we evaluate agents on tasks we have ground truth for. This means we evaluate summarisation on datasets with human-written summaries. We evaluate code generation on LeetCode-style problems. We evaluate safety on known attack patterns. But the distribution of real user tasks is different from the distribution of tasks with available ground truth. This is conditioning on a collider — it systematically overestimates performance on known task types and underestimates generalisation.</p>
+
+<p>The fix: sample from production traffic. Use human raters on a subset (expensive but unbiased). Use an LLM-as-judge on the full sample (biased but cheap). Model the bias — if the LLM judge systematically disagrees with humans on certain task types, weight those types differently in the final score.</p>
+
+<h2>A Practical Protocol</h2>
+<ol>
+<li>Create a frozen evaluation set — 50 to 100 tasks spanning all difficulty levels, types, and domains. Do not change this set during the evaluation period.</li>
+<li>Randomise the order — run both agents on the same tasks, in random order, to control for carryover effects.</li>
+<li>Measure the treatment effect — the difference in performance between the two agents on the same task. This is the Average Treatment Effect of the change.</li>
+<li>Analyse heterogeneity — use causal forests to find which task types the change helped or hurt most.</li>
+<li>Report uncertainty — confidence intervals on the ATE, not just point estimates. If the CI crosses zero, the evidence for improvement is weak.</li>
+<li>Check for confounders — compare the task distributions between the evaluation periods. If they differ, stratify or use inverse probability weighting.</li>
+</ol>`,
+'Sources: Causal Inference.md, Potential Outcomes Framework.md, Pearl Causal Model.md, Confounding.md, Selection Bias.md, Agent Evaluation.md, Agent Testing Strategies.md, Do-Calculus.md.'
+);
+
+// ─── PUBLICATION 6: NEUROBIOLOGY OF AGENT MEMORY ───
+a('neuro-memory','Neurobiology of Agent Memory Systems',
+'The 5-tier agent memory hierarchy is not an engineering invention — it is a rediscovery of the mammalian memory architecture. Understanding the biological constraints predicts exactly where agent memory systems fail.',
+['neuroscience','memory','agents'],['t-green','t-pink','t-purple'],
+`<p>The five-tier memory hierarchy proposed for agent systems — working memory, episodic memory, semantic memory, procedural memory, and meta-memory — maps with striking precision onto the mammalian memory system. This is not a metaphor. The convergence exists because both systems solve the same computational problem: how to store and retrieve information across multiple timescales with limited capacity and competing demands. The brain is the only working reference implementation of general-purpose memory. Ignoring it means rediscovering its solutions — and its failure modes.</p>
+
+<h2>Complementary Learning Systems (CLS) Theory</h2>
+<p>McClelland, McNaughton and O'Reilly proposed that the brain uses two complementary learning systems. The hippocampus learns rapidly from single experiences (episodic memory) and replays them during sleep to gradually consolidate into neocortical semantic memory. This avoids catastrophic forgetting — the neocortex learns slowly by interleaving new patterns with old ones.</p>
+
 <table>
-<tr><th>Phase</th><th>Spread</th><th>Example</th></tr>
-<tr><td>Gas (highly liquid)</td><td>1-2 bps</td><td>SPY at 10:30 AM</td></tr>
-<tr><td>Liquid (normal)</td><td>3-5 bps</td><td>Typical trading</td></tr>
-<tr><td>Solid (illiquid)</td><td>10-50+ bps</td><td>Small-cap during news</td></tr>
-<tr><td>Critical (near-transition)</td><td>Narrow but fragile</td><td>Before flash crash</td></tr>
+<tr><th>System</th><th>Rate</th><th>Agent Equivalent</th><th>Failure Mode</th></tr>
+<tr><td>Hippocampus</td><td>Fast (one-shot)</td><td>Episodic buffer (session logs)</td><td>Limited capacity; overwritten by new experiences</td></tr>
+<tr><td>Neocortex</td><td>Slow (interleaved replay)</td><td>Semantic memory (vector DB, concept notes)</td><td>Catastrophic forgetting if updated too fast</td></tr>
 </table>
 
-<h3>Three practical rules</h3>
-<p><strong>Monitor critical distance</strong> — track order book imbalance / spread ratio. When ratio < 0.8, reduce position size and shift from market to limit orders.</p>
-<p><strong>Use power-law impact models near criticality</strong> — Almgren-Chriss underestimates impact by 5x near phase transitions. Market impact becomes superlinear.</p>
-<p><strong>Detect regime via tail exponent, not ADX</strong> — a falling tail exponent means the market is nearing criticality. Use Hill estimator on the top 5% of absolute returns.</p>
+<p>Agent systems that write directly to semantic memory (vector DBs, fact stores) without an episodic buffer and consolidation mechanism will experience the same catastrophic forgetting the neocortex would without the hippocampus. This is exactly what happens with online learning in neural networks — and why every production RAG system should batch-update rather than single-write.</p>
 
-<p style="margin-top:24px; font-size:14px; color:var(--gray-400);">Sources: Complexity Science.md, Tipping Points.md, Market Microstructure & Order Flow.md, Network Science.md, Backtesting Methodology.md.</p>`
-      }
-    ];
+<h2>The Binding Problem</h2>
+<p>The hippocampus binds disparate features — what, where, when, who, how — into a unified episodic representation. Context windows do not bind — they concatenate. The LLM sees "timestamp 10:15, tool read_file returned X" as adjacent text, but there is no structural binding beyond text position. Agent memory systems should store episodes as structured records with explicit feature fields — task, tool, outcome, context, timestamp, user ID — not as raw text logs.</p>
 
-    // ── Render articles ──
-    function renderArticles(list) {
-      const el = document.getElementById('articlesList');
-      el.innerHTML = '';
-      list.forEach(a => {
-        const div = document.createElement('div');
-        div.className = 'article-card fade-in';
-        div.innerHTML = `
-          <div class="meta">
-            ${a.category.map((c,i) => `<div class="cat-badge" style="margin-bottom:4px;">${c}</div>`).join('')}
-          </div>
-          <div>
-            <h3>${a.title}</h3>
-            <div class="excerpt">${a.excerpt}</div>
-            <a class="read-link" href="#" onclick="openModal('${a.id}');return false;">Read publication →</a>
-          </div>`;
-        el.appendChild(div);
-      });
-    }
-    renderArticles(articles);
+<h2>Forgetting Is a Feature</h2>
+<p>A perfect memory system (no forgetting) performs worse than one that forgets strategically. The hippocampus actively erases some memories to make room for new ones. Agent memory systems that never prune, summarise, or expire become bloated by irrelevant detail. Memory is selection, not storage.</p>
 
-    // ── Modal ──
-    function openModal(id) {
-      const a = articles.find(x => x.id === id);
-      if (!a) return;
-      const el = document.getElementById('modalContent');
-      el.innerHTML = `<h2>${a.title}</h2><div class="byline">${a.category.map(c => `<span class="card-badge ${a.color[a.category.indexOf(c)]}" style="margin-right:4px;">${c}</span>`).join('')}</div><div class="article-body">${a.full}</div>`;
-      document.getElementById('modalOverlay').classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-    function closeModal() {
-      document.getElementById('modalOverlay').classList.remove('open');
-      document.body.style.overflow = '';
-    }
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+<h2>Consolidation During Sleep</h2>
+<p>Sleep consolidates memory through two distinct processes. Slow-wave sleep features hippocampal replay where daytime experiences are gradually absorbed by the neocortex — analogous to offline batch processing of session logs against the semantic store. REM sleep features cortical-cortical integration and creative re-combination — analogous to cross-domain synthesis connecting facts across different knowledge areas.</p>
 
-    // ── Nav ──
-    function toggleNav() {
-      document.getElementById('navLinks').classList.toggle('open');
-    }
-  </script>
+<p>Every agent system should have a consolidation cycle — a scheduled offline period where episodic memory (session logs) is distilled into semantic memory (facts, patterns, skills). Without consolidation, the agent's memory is unintegrated: it knows what happened but has not extracted what it means.</p>`,
+'Sources: Agent Memory Systems.md, Hippocampus.md, Memory Consolidation.md, Declarative Memory.md, Procedural Memory.md, Forgetting.md, Neurogenesis.md, Sleep.md, Slow-Wave Sleep.md, REM Sleep.md.'
+);
+
+// ─── PUBLICATION 7: DISPOSITION EFFECT AS RL FAILURE ───
+a('disposition-rl','The Disposition Effect as a Reinforcement Learning Failure',
+'The disposition effect — selling winners too early, holding losers too long — is not a cognitive bias. It is a reinforcement learning failure coded into the brain\'s dopamine system.',
+['finance','neuroscience','RL','trading'],['t-blue','t-green','t-pink','t-gray'],
+`<p>The disposition effect — selling winners too early, holding losers too long — is not a cognitive bias. It is a reinforcement learning failure. The brain's dopamine system implements a temporal-difference (TD) learning algorithm that works perfectly in natural environments but fails catastrophically in the asymmetric, stochastic, and delayed-reward structure of financial markets.</p>
+
+<h2>The Neural RL Algorithm</h2>
+<p>Dopamine neurons encode a prediction error signal: δ = R + γV(s') - V(s). When a trade moves in your favour, the dopamine prediction error fires — "better than expected." The system then learns to expect that gain. When price stops rising, the brain experiences a negative prediction error — even though you are still up 5%. The brain says "sell now" to avoid the feeling of losing what was already "earned."</p>
+
+<p>This is not miscalculation. The TD algorithm is working exactly as designed. In an ancestral environment, capturing a reward when it appears is optimal. In financial markets, it produces systematically bad behaviour.</p>
+
+<h2>Why Winners Get Sold Too Early</h2>
+<p>At +5% unrealised gain, the brain has learned to expect that gain. The dopamine response shifts from the gain itself to the earliest reliable predictor of it. When price does not continue rising, the system experiences a negative prediction error — even though you are still up 5%. The urge to sell is not fear; it is a TD learning signal telling you that the reward prediction is no longer being met.</p>
+
+<h2>Why Losers Get Held Too Long</h2>
+<p>The brain habituates to losses. Each incremental loss produces a smaller negative prediction error than the first. By the time the trade is down 10%, the dopamine signal is flat — the system has adapted. The "sell" signal stops firing. This is habituation — the same mechanism that makes a persistent sound disappear from conscious awareness.</p>
+
+<h2>The Antidote</h2>
+<table>
+<tr><th>Intervention</th><th>Mechanism</th><th>Effect</th></tr>
+<tr><td>Pre-committed stops</td><td>Bypasses TD system entirely</td><td>Eliminates disposition effect</td></tr>
+<tr><td>Automated profit-taking</td><td>Target becomes the dopamine signal</td><td>Eliminates premature selling</td></tr>
+<tr><td>Trade journal + decision quality score</td><td>Cortical override (PFC inhibition of limbic)</td><td>30-50% reduction</td></tr>
+<tr><td>Reduced position size</td><td>Smaller prediction errors</td><td>20-40% reduction</td></tr>
+<tr><td>Offload execution to agent</td><td>The agent has no dopamine system</td><td>100% elimination</td></tr>
+</table>
+
+<blockquote>The Hermes trading agent is the antidote to the disposition effect. It has no dopamine system. It will follow pre-committed stops and targets. Offloading execution to the agent is not a convenience — it is a biological necessity.</blockquote>`,
+'Sources: Trading Psychology & Decision Science.md, Behavioral Finance & Market Psychology.md, Reinforcement Learning for Trading.md, Reinforcement Learning.md, Dopamine.md, Agentic Trading Systems.md.'
+);
+
+// ─── RENDER ───
+function renderEntries() {
+  const el = document.getElementById('entry-list');
+  el.innerHTML = '';
+  articles.forEach(a => {
+    const d = document.createElement('a');
+    d.href = '#'; d.className = 'entry';
+    d.onclick = (e) => { e.preventDefault(); showArticle(a.id); };
+    d.innerHTML = `<div class="meta"><span>${a.tags.map((t,i) => `<span class="tag ${a.tagColors[i]}">${t}</span>`).join('')}</span></div><h3>${a.title}</h3><div class="excerpt">${a.subtitle}</div>`;
+    el.appendChild(d);
+  });
+}
+
+function showView(v) {
+  document.getElementById('view-home').classList.toggle('hide', v !== 'home');
+  document.getElementById('view-article').classList.toggle('hide', v !== 'article');
+  window.scrollTo(0,0);
+}
+
+function showArticle(id) {
+  const a = articles.find(x => x.id === id);
+  if (!a) return;
+  document.getElementById('article-tags').innerHTML = a.tags.map((t,i) => `<span class="tag ${a.tagColors[i]}">${t}</span>`).join('');
+  document.getElementById('article-title').textContent = a.title;
+  document.getElementById('article-subtitle').textContent = a.subtitle;
+  document.getElementById('article-body').innerHTML = a.body;
+  document.getElementById('article-footer').innerHTML = '<strong>Sources:</strong> ' + a.footer;
+  showView('article');
+}
+
+renderEntries();
+</script>
 </body>
 </html>

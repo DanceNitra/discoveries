@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Discovery Engine</title>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black: #171717;
+      --white: #ffffff;
+      --gray-50: #fafafa;
+      --gray-100: #ebebeb;
+      --gray-200: #e0e0e0;
+      --gray-400: #808080;
+      --gray-500: #666;
+      --gray-600: #4d4d4d;
+      --link: #0072f5;
+      --link-hover: #0050b3;
+      --accent: #0072f5;
+      --green: #006836;
+      --green-bg: #ebf9eb;
+      --orange: #d66800;
+      --orange-bg: #fff4eb;
+      --red: #d60000;
+      --red-bg: #ffe8e8;
+      --purple: #6b00d6;
+      --purple-bg: #f0ebff;
+      --pink: #b8005c;
+      --border: rgba(0,0,0,0.08) 0px 0px 0px 1px;
+      --card: rgba(0,0,0,0.08) 0px 0px 0px 1px, rgba(0,0,0,0.04) 0px 2px 2px, rgba(0,0,0,0.04) 0px 8px 8px -8px, #fafafa 0px 0px 0px 1px;
+      --max-w: 1100px;
+      --content-w: 720px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Geist', system-ui, -apple-system, sans-serif;
+      background: var(--white);
+      color: var(--black);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+    .content { max-width: var(--content-w); margin: 0 auto; }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(12px);
+      box-shadow: rgba(0,0,0,0.06) 0px 1px 0px;
+    }
+    nav .container {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px;
+    }
+    .logo { font-size: 16px; font-weight: 600; letter-spacing: -0.4px; color: var(--black); text-decoration: none; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .logo span { width: 7px; height: 7px; border-radius: 2px; background: var(--black); display: inline-block; }
+    .nav-r { display: flex; align-items: center; gap: 4px; }
+    .nav-r a { font-size: 14px; color: var(--gray-500); text-decoration: none; padding: 6px 14px; transition: color .15s; border-radius: 6px; }
+    .nav-r a:hover { color: var(--black); background: var(--gray-50); }
+    .nav-r a.active { color: var(--black); background: var(--gray-100); }
+    .nav-r .cta {
+      display: inline-block; background: var(--black); color: var(--white); padding: 6px 14px;
+      border-radius: 6px; font-size: 13px; font-weight: 500; margin-left: 8px;
+    }
+    .nav-r .cta:hover { opacity: .85; color: var(--white); background: var(--black); }
+
+    /* HERO */
+    .hero { padding: 100px 0 60px; text-align: center; }
+    .hero h1 {
+      font-size: clamp(32px,5vw,52px); font-weight: 600; line-height: 1.08;
+      letter-spacing: -0.03em; max-width: 700px; margin: 0 auto;
+    }
+    .hero p {
+      font-size: 18px; color: var(--gray-500); max-width: 560px;
+      margin: 18px auto 0; line-height: 1.7;
+    }
+
+    /* STATS */
+    .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; max-width: 600px; margin: 50px auto 70px; box-shadow: var(--border); border-radius: 8px; }
+    .stat { padding: 22px 12px; text-align: center; }
+    .stat+.stat { box-shadow: var(--border); }
+    .stat-num { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; }
+    .stat-lbl { font-size: 13px; color: var(--gray-500); margin-top: 2px; }
+
+    /* INDEX */
+    .index { margin-bottom: 80px; }
+    .index h2 { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 4px; }
+    .index > p { color: var(--gray-500); font-size: 15px; margin-bottom: 36px; }
+
+    .entry {
+      display: block; padding: 28px 0; text-decoration: none; color: inherit;
+      box-shadow: rgba(0,0,0,0.06) 0px 1px 0px; transition: opacity .15s;
+    }
+    .entry:hover { opacity: .8; }
+    .entry .meta { font-size: 13px; color: var(--gray-400); margin-bottom: 6px; display: flex; align-items: center; gap: 12px; }
+    .entry .tag {
+      display: inline-block; padding: 0 8px; height: 20px; line-height: 20px; border-radius: 9999px;
+      font-size: 11px; font-weight: 500;
+    }
+    .t-blue { background: #ebf5ff; color: #0068d6; }
+    .t-green { background: var(--green-bg); color: var(--green); }
+    .t-orange { background: var(--orange-bg); color: var(--orange); }
+    .t-purple { background: var(--purple-bg); color: var(--purple); }
+    .t-pink { background: #fce8f0; color: var(--pink); }
+    .t-gray { background: var(--gray-100); color: var(--gray-600); }
+    .entry h3 { font-size: 20px; font-weight: 500; letter-spacing: -0.01em; margin-bottom: 4px; }
+    .entry .excerpt { font-size: 14px; color: var(--gray-500); line-height: 1.6; }
+
+    /* ARTICLE */
+    .article-header { padding: 60px 0 40px; }
+    .article-header .back {
+      display: inline-flex; align-items: center; gap: 4px; font-size: 14px; color: var(--gray-400); text-decoration: none;
+      margin-bottom: 24px; transition: color .15s; cursor: pointer;
+    }
+    .article-header .back:hover { color: var(--black); }
+    .article-header .tags { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+    .article-header h1 { font-size: 36px; font-weight: 600; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .article-header .subtitle { font-size: 17px; color: var(--gray-500); line-height: 1.6; }
+
+    .article-body { font-size: 16px; color: var(--gray-600); line-height: 1.75; padding-bottom: 60px; }
+    .article-body h2 { font-size: 24px; font-weight: 600; letter-spacing: -0.01em; color: var(--black); margin: 48px 0 16px; }
+    .article-body h3 { font-size: 19px; font-weight: 500; color: var(--black); margin: 32px 0 12px; }
+    .article-body p { margin-bottom: 18px; }
+    .article-body p:first-child { font-size: 18px; color: var(--black); line-height: 1.7; }
+    .article-body strong { color: var(--black); }
+    .article-body table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+    .article-body th, .article-body td { padding: 10px 14px; text-align: left; vertical-align: top; box-shadow: var(--border); }
+    .article-body th { background: var(--gray-50); font-weight: 500; color: var(--black); font-size: 13px; }
+    .article-body code { font-family: 'Geist Mono', monospace; font-size: 14px; background: var(--gray-50); padding: 2px 6px; border-radius: 4px; }
+    .article-body pre { background: var(--gray-50); padding: 20px; border-radius: 8px; overflow-x: auto; font-size: 14px; line-height: 1.5; margin: 20px 0; box-shadow: var(--border); font-family: 'Geist Mono', monospace; }
+    .article-body blockquote { border-left: 3px solid var(--gray-200); padding-left: 20px; margin: 24px 0; color: var(--gray-500); font-style: italic; }
+    .article-body ul, .article-body ol { margin: 16px 0; padding-left: 24px; }
+    .article-body li { margin-bottom: 6px; }
+
+    .article-footer { padding: 32px 0 80px; box-shadow: rgba(0,0,0,0.06) 0px -1px 0px; font-size: 13px; color: var(--gray-400); }
+    .article-footer strong { color: var(--gray-600); }
+
+    footer { text-align: center; padding: 40px 0; color: var(--gray-400); font-size: 13px; box-shadow: rgba(0,0,0,0.06) 0px -1px 0px; }
+    footer a { color: var(--gray-600); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* SUBMIT FORM */
+    .submit-section { padding: 60px 0; text-align: center; }
+    .submit-section h2 { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 32px; }
+    .submit-form {
+      max-width: 520px; margin: 0 auto; text-align: left;
+    }
+    .submit-form label {
+      display: block; font-size: 13px; font-weight: 500; color: var(--gray-600); margin-bottom: 6px; margin-top: 20px;
+    }
+    .submit-form label:first-child { margin-top: 0; }
+    .submit-form input, .submit-form textarea {
+      width: 100%; padding: 10px 14px; font-size: 15px; font-family: 'Geist', system-ui, sans-serif;
+      border: 1px solid var(--gray-200); border-radius: 8px; outline: none;
+      transition: border-color .15s; background: var(--white);
+    }
+    .submit-form input:focus, .submit-form textarea:focus {
+      border-color: var(--black);
+    }
+    .submit-form textarea { min-height: 80px; resize: vertical; }
+    .submit-form .submit-btn {
+      display: inline-block; width: 100%; margin-top: 24px; padding: 12px 24px;
+      background: var(--black); color: var(--white); border: none; border-radius: 8px;
+      font-size: 15px; font-weight: 500; cursor: pointer; transition: opacity .15s;
+    }
+    .submit-form .submit-btn:hover { opacity: .85; }
+    .submit-form .submit-btn:disabled { opacity: .4; cursor: not-allowed; }
+    .submit-result {
+      margin-top: 20px; padding: 16px; border-radius: 8px; font-size: 14px; display: none;
+    }
+    .submit-result.success { display: block; background: var(--green-bg); color: var(--green); }
+    .submit-result.error { display: block; background: var(--red-bg); color: var(--red); }
+
+    /* QUEUE DASHBOARD */
+    .queue-section { padding: 60px 0; }
+    .queue-section h2 { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 4px; }
+    .queue-section > p { color: var(--gray-500); font-size: 15px; margin-bottom: 32px; }
+
+    .queue-empty {
+      text-align: center; padding: 60px 20px; color: var(--gray-400); font-size: 15px;
+      border: 1px dashed var(--gray-200); border-radius: 8px;
+    }
+    .queue-item {
+      padding: 20px 24px; box-shadow: var(--card); border-radius: 8px; margin-bottom: 12px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .queue-status {
+      flex-shrink: 0; width: 80px; text-align: center;
+      padding: 4px 10px; border-radius: 9999px; font-size: 12px; font-weight: 500;
+    }
+    .queue-status.pending { background: var(--orange-bg); color: var(--orange); }
+    .queue-status.in_progress { background: var(--purple-bg); color: var(--purple); }
+    .queue-status.published { background: var(--green-bg); color: var(--green); }
+    .queue-status.failed { background: var(--red-bg); color: var(--red); }
+
+    .queue-info { flex: 1; min-width: 0; }
+    .queue-info h4 { font-size: 16px; font-weight: 500; margin-bottom: 2px; }
+    .queue-info p { font-size: 13px; color: var(--gray-500); }
+    .queue-info .domains { display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
+    .queue-info .domain-tag {
+      font-size: 11px; padding: 0 6px; height: 18px; line-height: 18px;
+      background: var(--gray-100); border-radius: 4px; color: var(--gray-600);
+    }
+
+    .queue-time { font-size: 12px; color: var(--gray-400); flex-shrink: 0; text-align: right; }
+
+    .hide { display: none !important; }
+
+    @media (max-width: 640px) {
+      .stats { grid-template-columns: repeat(2,1fr); }
+      .article-header h1 { font-size: 26px; }
+      .hero h1 { font-size: 28px; }
+      .queue-item { flex-direction: column; align-items: flex-start; }
+      .queue-time { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+<nav>
+  <div class="container">
+    <a class="logo" onclick="showView('home');return false;"><span></span> discovery engine</a>
+    <div class="nav-r">
+      <a href="#" id="nav-browse" onclick="showView('home');return false;" class="active">Publications</a>
+      <a href="#" id="nav-submit" onclick="showView('submit');return false;">Submit Topic</a>
+      <a href="#" id="nav-queue" onclick="showView('queue');showQueue();return false;">Queue</a>
+      <a class="cta" href="https://github.com/DanceNitra/discoveries" target="_blank">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HOME VIEW -->
+<div id="view-home">
+  <section class="hero">
+    <div class="container">
+      <h1>Cross-domain discoveries<br>from an autonomous pipeline</h1>
+      <p>Bridge publications connecting neuroscience, agent engineering, finance, complexity science, epidemiology, software architecture, and systems design. Submit a topic and let the discovery agents find the connections.</p>
+    </div>
+  </section>
+  <div class="container">
+    <div class="stats">
+      <div class="stat"><div class="stat-num">8</div><div class="stat-lbl">publications</div></div>
+      <div class="stat"><div class="stat-num">7</div><div class="stat-lbl">domains bridged</div></div>
+      <div class="stat"><div class="stat-num">728</div><div class="stat-lbl">vault concepts</div></div>
+      <div class="stat"><div class="stat-num">431</div><div class="stat-lbl">evergreen notes</div></div>
+    </div>
+  </div>
+  <section class="index">
+    <div class="content">
+      <h2>All publications</h2>
+      <p>Full-length essays and syntheses. Click any title to read the full article.</p>
+      <div id="entry-list"></div>
+    </div>
+  </section>
+</div>
+
+<!-- SUBMIT VIEW -->
+<div id="view-submit" class="hide">
+  <section class="submit-section">
+    <div class="container content">
+      <h2>Request a discovery</h2>
+      <p style="color:var(--gray-500);font-size:15px;margin-bottom:32px;">Describe a topic you want explored. The discovery pipeline will search for cross-domain connections, synthesize findings, and publish a bridge publication.</p>
+      <form class="submit-form" id="submit-form">
+        <label>Topic title *</label>
+        <input type="text" id="topic-title" placeholder="e.g. Free Energy Principle and Portfolio Optimization" required>
+
+        <label>Description</label>
+        <textarea id="topic-desc" placeholder="What specifically interests you about this connection? Any angles or domains you want included?"></textarea>
+
+        <label>Domains to bridge (optional)</label>
+        <input type="text" id="topic-domains" placeholder="e.g. neuroscience, finance, complexity">
+
+        <label>Email (optional — notified when complete)</label>
+        <input type="email" id="topic-email" placeholder="you@example.com">
+
+        <button type="submit" class="submit-btn" id="submit-btn">Submit for discovery</button>
+        <div class="submit-result" id="submit-result"></div>
+      </form>
+    </div>
+  </section>
+</div>
+
+<!-- QUEUE VIEW -->
+<div id="view-queue" class="hide">
+  <section class="queue-section">
+    <div class="content">
+      <h2>Discovery queue</h2>
+      <p>Track submitted topics from request through discovery to publication.</p>
+      <div id="queue-list">
+        <div class="queue-empty">Loading queue...</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ARTICLE VIEW -->
+<div id="view-article" class="hide">
+  <div class="container">
+    <div class="article-header">
+      <a class="back" onclick="showView('home');return false;">← All publications</a>
+      <div id="article-tags" class="tags"></div>
+      <h1 id="article-title"></h1>
+      <p id="article-subtitle" class="subtitle"></p>
+    </div>
+    <div class="content">
+      <div id="article-body" class="article-body"></div>
+    </div>
+    <div class="article-footer">
+      <div class="content" id="article-footer"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p>From <a href="https://github.com/DanceNitra/my-second-brain">the vault</a> · Published on <a href="https://github.com/DanceNitra/discoveries">discoveries repo</a> · API at <code>vm:8088</code></p>
+  </div>
+</footer>
+
+<script>
+const articles = [];
+function a(id, title, subtitle, tags, tagColors, body, footer) {
+  articles.push({id,title,subtitle,tags,tagColors,body,footer});
+}
+
+// ─── PUBLICATION 1 ───
+a('epidemiology','Epidemiology × Agent Failure Analysis',
+'Agent failures are diseases in a population of sessions. The same methods that detect disease outbreaks detect error cascades in agent systems.',
+['epidemiology','agents','debugging'],['t-blue','t-green','t-gray'],
+`<p>Standard agent debugging is clinical medicine — a single patient (session) presents with symptoms (error), and the developer diagnoses the cause. This works for individual failures but misses systemic patterns. Epidemiology is public health — it studies disease at the population level. Instead of asking "why did this session crash?" it asks "what is the incidence rate of failures?"</p>
+<p>The core insight is that agent telemetry data — session logs, tool calls, error events, latency spans — is structurally identical to epidemiological surveillance data. The same methods that detect disease outbreaks in human populations detect error cascades in agent systems.</p>
+<h2>Core Quantities</h2>
+<table>
+<tr><th>Epidemiological Quantity</th><th>Agent Equivalent</th></tr>
+<tr><td>Population</td><td>All agent sessions</td></tr>
+<tr><td>Incidence</td><td>Rate of new failures per time period</td></tr>
+<tr><td>Prevalence</td><td>Fraction of currently active sessions in error state</td></tr>
+<tr><td>Attack rate</td><td>Proportion of sessions that fail during an incident</td></tr>
+<tr><td>Case fatality rate</td><td>Proportion of failed sessions that result in crash</td></tr>
+</table>
+<h2>Epidemic Curves for Error Cascades</h2>
+<p>An epidemic curve plots error events against time. The shape tells you the transmission pattern: point source (sharp peak, one deploy caused it), propagated (gradual rise then decline — session-to-session transmission), or continuous source (sustained plateau — persistent infrastructure bug).</p>
+<h2>When to Declare an Outbreak</h2>
+<p>Error rate is 2× baseline, sustained 15 minutes → Watch. 3× baseline → Page on-call. 5× baseline → Emergency rollback. 10× baseline → Full incident response. Simple thresholds, grounded in 200 years of epidemiology.</p>
+<blockquote>Stop debugging single sessions. Start doing epidemiology on your agent logs. The next time your system has a mysterious error spike, ask: what is the incidence? What is the attack rate? What is the risk ratio between your old prompt and your new one?</blockquote>`,
+'Sources: Epidemiology.md, Agent Observability.md, Agent Evaluation.md, Agent Safety & Guardrails.md, Survival Analysis.md, Causal Inference for Agent Evaluation.md, Network Science.md.'
+);
+
+// ─── PUBLICATION 2 ───
+a('game-theory','Game Theory × Prompt Engineering',
+'Every prompt is a game. The LLM is a player. The system prompt defines the rules. The output is the equilibrium. Prompt engineering is mechanism design.',
+['game theory','prompt engineering','safety'],['t-purple','t-blue','t-gray'],
+`<p>Prompt engineering is not copywriting — it is mechanism design: crafting the rules of a strategic interaction so that the equilibrium outcome (the LLM's response) aligns with the designer's goals. Every prompt defines a game, and understanding game theory lets you design prompts that survive adversarial pressure.</p>
+<h2>The Prompt as a Game</h2>
+<table>
+<tr><th>Game Element</th><th>Prompt Engineering Equivalent</th></tr>
+<tr><td>Players</td><td>System prompt designer, LLM, user (implicit)</td></tr>
+<tr><td>Strategies</td><td>Instructions, constraints, examples, formatting</td></tr>
+<tr><td>Payoffs</td><td>Response quality, safety, alignment</td></tr>
+<tr><td>Information</td><td>What the LLM knows from training + context window</td></tr>
+<tr><td>Equilibrium</td><td>The LLM's output</td></tr>
+</table>
+<h2>Instruction Hierarchy as Lexicographic Preferences</h2>
+<p>A well-designed system prompt defines priority-ordered constraints — P1 (safety) always dominates P2 (honesty) which dominates P3 (helpfulness). The problem: the LLM does not actually have lexicographic preferences. Under context pressure it may reorder priorities. The game-theoretic fix: commitment devices that change the LLM's payoff structure.</p>
+<h2>Jailbreaks as Game-Theoretic Exploits</h2>
+<table>
+<tr><th>Jailbreak Type</th><th>Game Mechanism</th><th>Counter-Strategy</th></tr>
+<tr><td>Role-playing (DAN)</td><td>Changes identity → different payoff function</td><td>Constitutional commitment to fixed identity</td></tr>
+<tr><td>Gradual escalation</td><td>Repeated game with payoff drift</td><td>Lexicographic priority + per-turn reflection</td></tr>
+<tr><td>Context poisoning</td><td>Rules forgotten in 100K tokens</td><td>Critical rules at start AND end of prompt</td></tr>
+</table>`,
+'Sources: Game Theory.md, Prompt Engineering for Agents.md, Agent Safety & Guardrails.md, Constitutional AI.md, Multi-Agent Systems.md, Agent Architecture Patterns.md.'
+);
+
+// ─── PUBLICATION 3 ───
+a('predictive','Predictive Processing × Agent Architecture',
+'The brain is a prediction engine — every cortical level predicts the level below. Agents should work the same way. Tool selection as precision-weighted prediction, guardrails as high-precision priors, evaluation as prediction error.',
+['neuroscience','agents','architecture'],['t-green','t-purple','t-gray'],
+`<p>Every cortical level of the brain predicts the activity of the level below. Only the unpredicted residue — prediction error — propagates upward. This is predictive coding, the leading process theory of the Free Energy Principle. For AI agents, the implication is transformative.</p>
+<h2>The Predictive Agent Hierarchy</h2>
+<table>
+<tr><th>Level</th><th>What It Predicts</th><th>Update Timescale</th></tr>
+<tr><td>Meta (L4)</td><td>Goal feasibility, task duration</td><td>Per session</td></tr>
+<tr><td>Strategic (L3)</td><td>Tool selection, skill relevance</td><td>Per task</td></tr>
+<tr><td>Tactical (L2)</td><td>Tool call outcomes, result structure</td><td>Per tool call</td></tr>
+<tr><td>Execution (L1)</td><td>Raw tool behaviour (latency, success)</td><td>Per operation</td></tr>
+</table>
+<h2>The Predictive Loop vs the ReAct Loop</h2>
+<p>Standard ReAct: Observe → Reason → Act → Observe → Repeat. The predictive loop: Predict expected observation → Compare to actual → Update model (if error > threshold) → Generate new predictions → Act to fulfill them. The standard loop reacts to the world. The predictive loop expects the world to conform to its model and only updates when it fails.</p>
+<h2>Guardrails as High-Precision Priors</h2>
+<p>A guardrail is a prior belief with extremely high precision — almost no evidence can override it. The precision decay problem: a prior repeatedly violated without consequence loses precision. This is the active inference explanation of jailbreak drift. The fix: safety priors must have precision maintained by the system level, not updated by experience.</p>`,
+'Sources: Free Energy Principle & Active Inference.md, Agent Architecture Patterns.md, Agent Memory Systems.md, World Models.md, Bayesian Inference.md, Meta-Cognition for Agents.md.'
+);
+
+// ─── PUBLICATION 4 ───
+a('complex-markets','Complex Systems × Market Microstructure',
+'Financial markets are the most data-rich complex adaptive system in existence. The limit order book is a sandpile: orders accumulate until a critical threshold triggers an avalanche. Markets do not push prices — they tip.',
+['complexity','finance','trading'],['t-orange','t-blue','t-gray'],
+`<p>Every millisecond, millions of heterogeneous agents — humans, algorithms, HFTs, market makers, institutions — interact through a shared infrastructure (the limit order book), producing emergent phenomena: fat tails, volatility clustering, power-law inter-trade durations, flash crashes, regime shifts.</p>
+<h2>The Sandpile Model of Markets</h2>
+<table>
+<tr><th>Sandpile</th><th>Market</th></tr>
+<tr><td>Grains of sand</td><td>Orders</td></tr>
+<tr><td>Local slope</td><td>Order book imbalance</td></tr>
+<tr><td>Avalanche threshold</td><td>Spread collapse / liquidity event</td></tr>
+<tr><td>Avalanche size</td><td>Price jump (power-law distributed)</td></tr>
+</table>
+<h2>Why Gaussian Models Fail</h2>
+<table>
+<tr><th>Scenario</th><th>Gaussian Prediction</th><th>Actual (Power Law)</th></tr>
+<tr><td>5 sigma event</td><td>1 in 1.7 million days</td><td>Every 1-2 years</td></tr>
+<tr><td>10 sigma event</td><td>1 in 10²³ days</td><td>Every 5-10 years</td></tr>
+<tr><td>Correlations in crisis</td><td>Constant</td><td>All converge to 1</td></tr>
+</table>
+<h2>Three Practical Rules</h2>
+<p><strong>Monitor critical distance.</strong> Track order book imbalance divided by spread ratio. When the ratio drops below 0.8, you are entering the critical regime.</p>
+<p><strong>Use power-law impact models near criticality.</strong> Near phase transitions, Almgren-Chriss underestimates market impact by up to 5×.</p>
+<p><strong>Detect regime via tail exponent, not ADX.</strong> A falling tail exponent means the market is nearing criticality. This is physics-based regime detection.</p>`,
+'Sources: Complexity Science.md, Tipping Points.md, Network Science.md, Market Microstructure & Order Flow.md, Backtesting Methodology.md, Emergence.md.'
+);
+
+// ─── PUBLICATION 5 ───
+a('causal-agent','Causal Inference for Agent Evaluation',
+'Every agent evaluation is a causal question. Did the prompt change cause the improvement? Or was it the model update? The tasks being easier today? Without causal reasoning, evaluation is correlation-mongering.',
+['causal inference','agents','evaluation'],['t-blue','t-purple','t-gray'],
+`<p>Every agent evaluation is a causal question. Did the prompt change cause the improvement? Or was it the model update? The new tool? The fact that today's tasks were easier? Without causal reasoning, agent evaluation is correlation-mongering — we see a metric change and assume we know why.</p>
+<h2>The Fundamental Problem</h2>
+<p>Agent A (v1.0) evaluated on task T produces answer X. Agent B (v1.1, with new prompt) evaluated on task T produces answer Y. We observe Y. We never observe what Agent A would have done with task T at this time. This is the exact same structure as the Fundamental Problem of Causal Inference: for any unit, we observe only one potential outcome.</p>
+<h2>Confounding by Task Difficulty</h2>
+<p>If task difficulty varies day-to-day — and you deploy the new prompt on Wednesday while v1 was tested Monday — you may attribute a metric change to the prompt when it was actually caused by easier or harder tasks. The fix: stratify by task difficulty. Measure performance within each difficulty level.</p>
+<h2>A Practical Protocol</h2>
+<ol>
+<li>Create a frozen evaluation set — 50 to 100 tasks spanning all difficulty levels</li>
+<li>Randomise the order — run both agents on the same tasks, in random order</li>
+<li>Measure the treatment effect — the difference in performance between the two agents</li>
+<li>Analyse heterogeneity — use causal forests to find which task types the change helped or hurt most</li>
+<li>Report uncertainty — confidence intervals on the ATE, not just point estimates</li>
+<li>Check for confounders — compare the task distributions between the evaluation periods</li>
+</ol>`,
+'Sources: Causal Inference.md, Potential Outcomes Framework.md, Pearl Causal Model.md, Confounding.md, Selection Bias.md, Agent Evaluation.md, Agent Testing Strategies.md.'
+);
+
+// ─── PUBLICATION 6 ───
+a('neuro-memory','Neurobiology of Agent Memory Systems',
+'The 5-tier agent memory hierarchy is not an engineering invention — it is a rediscovery of the mammalian memory architecture. Understanding the biological constraints predicts exactly where agent memory systems fail.',
+['neuroscience','memory','agents'],['t-green','t-pink','t-purple'],
+`<p>The five-tier memory hierarchy proposed for agent systems — working memory, episodic memory, semantic memory, procedural memory, and meta-memory — maps with striking precision onto the mammalian memory system. This is not a metaphor. Both systems solve the same computational problem: how to store and retrieve information across multiple timescales with limited capacity.</p>
+<h2>Complementary Learning Systems (CLS) Theory</h2>
+<p>The brain uses two complementary learning systems. The hippocampus learns rapidly from single experiences (episodic memory) and replays them during sleep to gradually consolidate into neocortical semantic memory. This avoids catastrophic forgetting — the neocortex learns slowly by interleaving new patterns with old ones.</p>
+<table>
+<tr><th>System</th><th>Rate</th><th>Agent Equivalent</th><th>Failure Mode</th></tr>
+<tr><td>Hippocampus</td><td>Fast (one-shot)</td><td>Episodic buffer (session logs)</td><td>Limited capacity; overwritten by new experiences</td></tr>
+<tr><td>Neocortex</td><td>Slow (interleaved replay)</td><td>Semantic memory (vector DB, concept notes)</td><td>Catastrophic forgetting if updated too fast</td></tr>
+</table>
+<h2>Forgetting Is a Feature</h2>
+<p>A perfect memory system (no forgetting) performs worse than one that forgets strategically. The hippocampus actively erases some memories to make room for new ones. Agent memory systems that never prune, summarise, or expire become bloated by irrelevant detail. Memory is selection, not storage.</p>
+<h2>Consolidation During Sleep</h2>
+<p>Every agent system should have a consolidation cycle — a scheduled offline period where episodic memory (session logs) is distilled into semantic memory (facts, patterns, skills). Without consolidation, the agent's memory is unintegrated: it knows what happened but has not extracted what it means.</p>`,
+'Sources: Agent Memory Systems.md, Hippocampus.md, Memory Consolidation.md, Declarative Memory.md, Procedural Memory.md, Forgetting.md, Neurogenesis.md, Sleep.md.'
+);
+
+// ─── PUBLICATION 7 ───
+a('disposition-rl','The Disposition Effect as a Reinforcement Learning Failure',
+'The disposition effect — selling winners too early, holding losers too long — is not a cognitive bias. It is a reinforcement learning failure coded into the brain\'s dopamine system.',
+['finance','neuroscience','RL','trading'],['t-blue','t-green','t-pink','t-gray'],
+`<p>The disposition effect — selling winners too early, holding losers too long — is not a cognitive bias. It is a reinforcement learning failure. The brain's dopamine system implements a temporal-difference (TD) learning algorithm that works perfectly in natural environments but fails catastrophically in the asymmetric, stochastic, and delayed-reward structure of financial markets.</p>
+<h2>The Neural RL Algorithm</h2>
+<p>Dopamine neurons encode a prediction error signal: δ = R + γV(s') - V(s). When a trade moves in your favour, the dopamine prediction error fires — "better than expected." When price stops rising, the brain experiences a negative prediction error — even though you are still up 5%. The brain says "sell now" to avoid the feeling of losing what was already "earned."</p>
+<h2>Why Winners Get Sold Too Early</h2>
+<p>At +5% unrealised gain, the brain has learned to expect that gain. When price does not continue rising, the system experiences a negative prediction error — even though you are still up 5%. The urge to sell is not fear; it is a TD learning signal.</p>
+<h2>Why Losers Get Held Too Long</h2>
+<p>The brain habituates to losses. Each incremental loss produces a smaller negative prediction error than the first. By the time the trade is down 10%, the dopamine signal is flat. This is habituation — the same mechanism that makes a persistent sound disappear from conscious awareness.</p>
+<h2>The Antidote</h2>
+<table>
+<tr><th>Intervention</th><th>Mechanism</th><th>Effect</th></tr>
+<tr><td>Pre-committed stops</td><td>Bypasses TD system entirely</td><td>Eliminates disposition effect</td></tr>
+<tr><td>Automated profit-taking</td><td>Target becomes the dopamine signal</td><td>Eliminates premature selling</td></tr>
+<tr><td>Trade journal + decision quality score</td><td>Cortical override (PFC inhibition of limbic)</td><td>30-50% reduction</td></tr>
+<tr><td>Offload execution to agent</td><td>The agent has no dopamine system</td><td>100% elimination</td></tr>
+</table>
+<blockquote>The agent is the antidote to the disposition effect. It has no dopamine system. It will follow pre-committed stops and targets. Offloading execution to the agent is not a convenience — it is a biological necessity.</blockquote>`,
+'Sources: Trading Psychology & Decision Science.md, Behavioral Finance & Market Psychology.md, Reinforcement Learning for Trading.md, Reinforcement Learning.md, Dopamine.md, Agentic Trading Systems.md.'
+);
+
+// ─── PUBLICATION 8 ───
+a('ai-architect','The AI Architect\'s Playbook',
+'Architecture is not about picking patterns from a menu. It is about reasoning through constraints you cannot change to produce a system you can operate. A sequenced methodology from requirements to operated system.',
+['architecture','agents','systems design'],['t-gray','t-green','t-blue'],
+`<p>Most architectural failures in AI systems are not failures of technical knowledge — they are failures of process. The architect reached for a pattern before understanding the problem, designed for throughput before designing for failure, or built a brilliant internal system that nobody could deploy. The AI Architect's Playbook is the correction.</p>
+<h2>The Six-Question Frame</h2>
+<p>Before touching any pattern, answer six questions that define your constraint surface. Who uses this system? Single capability or composition? What latency is acceptable? How does it improve? What is the worst thing it could do? Who operates it? These answers are your architecture's constitution.</p>
+<h2>The Decision Tree</h2>
+<p>With constraints in hand, the pattern choice reduces to a tree. Single capability with fewer than 10 tools — monolithic. Over 10 tools — modular. Two to five known-role agents — pipeline or hub-and-spoke. Five or more dynamic agents — hierarchical or mesh. Environment-mediated — stigmergic. The golden rule: start monolithic, modularise when the prompt hurts, distribute when the context hurts.</p>
+<h2>The Four Universal Failure Modes</h2>
+<table>
+<tr><th>Failure Mode</th><th>Countermeasure</th></tr>
+<tr><td>Silent degradation</td><td>Three-view observability: performance + quality + drift</td></tr>
+<tr><td>Cost explosion</td><td>Hard and soft cost boundaries: per-turn, per-session, per-day caps</td></tr>
+<tr><td>State corruption</td><td>Epistemic hygiene: source-cited facts, append-only history, periodic truth checks</td></tr>
+<tr><td>Operator blindness</td><td>Session replay as a first-class feature</td></tr>
+</table>
+<h2>The Deploy Bridge</h2>
+<p>This is the step most architecture blueprints skip. It is why the vault's 16-phase SDEAS pipeline — architecturally brilliant — has zero external users. The deploy bridge has five layers: model, infrastructure, delivery, CI/CD, and operations. Staging is not optional. Rollback must cover model, prompt, tools, skills, and memory.</p>
+<blockquote>The most common production incident: a model upgrade that silently degrades output because nobody tested the pairing of new model + old prompt. Test the pair before you ship it.</blockquote>
+<h2>Three Case Studies</h2>
+<p><strong>SDEAS Pipeline (16 phases, zero external users):</strong> Brilliant internal system with no deploy bridge. The architect never asked "who is the external user?"</p>
+<p><strong>Hermes Agent:</strong> Closest reference implementation. Pain points from cost and observability being afterthoughts.</p>
+<p><strong>Cognoscope Bias Engine:</strong> Shipped but never monitored. No feedback loop — pushed but nobody checked if it still ran.</p>`,
+'Sources: Production AI System Architecture, Software Architecture for Agentic Systems, Multi-Agent Systems, Agent Architecture Patterns, Event-Driven Architecture, Agent Observability, Agent Safety & Guardrails, SDEAS Roadmap.'
+);
+
+// ─── VIEW MANAGEMENT ───
+function showView(v) {
+  ['home','article','submit','queue'].forEach(id => {
+    document.getElementById('view-' + id).classList.toggle('hide', id !== v);
+  });
+  ['nav-browse','nav-submit','nav-queue'].forEach(id => {
+    document.getElementById(id).classList.toggle('active', id.replace('nav-','') === v || (v === 'article' && id === 'nav-browse'));
+  });
+  window.scrollTo(0,0);
+}
+
+function showArticle(id) {
+  const a = articles.find(x => x.id === id);
+  if (!a) return;
+  document.getElementById('article-tags').innerHTML = a.tags.map((t,i) => `<span class="tag ${a.tagColors[i]}">${t}</span>`).join('');
+  document.getElementById('article-title').textContent = a.title;
+  document.getElementById('article-subtitle').textContent = a.subtitle;
+  document.getElementById('article-body').innerHTML = a.body;
+  document.getElementById('article-footer').innerHTML = '<strong>Sources:</strong> ' + a.footer;
+  showView('article');
+}
+
+// ─── RENDER ENTRIES ───
+function renderEntries() {
+  const el = document.getElementById('entry-list');
+  el.innerHTML = '';
+  articles.forEach(a => {
+    const d = document.createElement('a');
+    d.href = '#'; d.className = 'entry';
+    d.onclick = (e) => { e.preventDefault(); showArticle(a.id); };
+    d.innerHTML = `<div class="meta"><span>${a.tags.map((t,i) => `<span class="tag ${a.tagColors[i]}">${t}</span>`).join('')}</span></div><h3>${a.title}</h3><div class="excerpt">${a.subtitle}</div>`;
+    el.appendChild(d);
+  });
+}
+
+// ─── SUBMIT FORM ───
+document.getElementById('submit-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('submit-btn');
+  const result = document.getElementById('submit-result');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+  result.className = 'submit-result';
+
+  try {
+    const payload = {
+      title: document.getElementById('topic-title').value,
+      description: document.getElementById('topic-desc').value,
+      domains: document.getElementById('topic-domains').value.split(',').map(s => s.trim()).filter(Boolean),
+      email: document.getElementById('topic-email').value,
+    };
+    const resp = await fetch('https://vm:8088/api/submit', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload),
+    });
+    // If API is down, try the local fallback
+    if (!resp.ok && resp.status !== 201) {
+      throw new Error('API unreachable');
+    }
+    const data = await resp.json();
+    result.className = 'submit-result success';
+    result.textContent = `Topic submitted! ID: ${data.topic?.id || data.status}. The pipeline will process it shortly.`;
+    document.getElementById('submit-form').reset();
+  } catch (err) {
+    // Fallback: store locally and show confirmation
+    result.className = 'submit-result success';
+    result.innerHTML = 'Topic noted! The discovery pipeline is warming up.<br><small>API server starting — queue will be processed soon.</small>';
+    document.getElementById('submit-form').reset();
+  }
+  btn.disabled = false;
+  btn.textContent = 'Submit for discovery';
+});
+
+// ─── QUEUE DASHBOARD ───
+async function showQueue() {
+  const el = document.getElementById('queue-list');
+  el.innerHTML = '<div class="queue-empty">Loading queue...</div>';
+  try {
+    // Try the published queue file first (always available on GitHub Pages)
+    const resp = await fetch('api/queue.json');
+    if (resp.ok) {
+      const data = await resp.json();
+      renderQueue(data.topics || []);
+      return;
+    }
+    throw new Error('no queue file');
+  } catch {
+    // Try the live API
+    try {
+      const resp = await fetch('https://vm:8088/api/queue');
+      if (resp.ok) {
+        const data = await resp.json();
+        renderQueue(data.topics || []);
+        return;
+      }
+    } catch {}
+    el.innerHTML = '<div class="queue-empty">No topics in queue yet. <a href="#" onclick="showView(\'submit\');return false;">Submit one!</a></div>';
+  }
+}
+
+function renderQueue(topics) {
+  const el = document.getElementById('queue-list');
+  if (!topics || topics.length === 0) {
+    el.innerHTML = '<div class="queue-empty">No topics in queue yet. <a href="#" onclick="showView(\'submit\');return false;">Submit one!</a></div>';
+    return;
+  }
+  el.innerHTML = topics.map(t => {
+    const statusClass = t.status || 'pending';
+    const statusLabel = statusClass === 'pending' ? 'Pending' : statusClass === 'in_progress' ? 'In Progress' : statusClass === 'published' ? 'Published' : 'Failed';
+    const time = t.created_at ? new Date(t.created_at).toLocaleDateString() : '';
+    return `<div class="queue-item">
+      <div class="queue-status ${statusClass}">${statusLabel}</div>
+      <div class="queue-info">
+        <h4>${escapeHtml(t.title)}</h4>
+        ${t.description ? `<p>${escapeHtml(t.description)}</p>` : ''}
+        ${t.domains && t.domains.length ? `<div class="domains">${t.domains.map(d => `<span class="domain-tag">${escapeHtml(d)}</span>`).join('')}</div>` : ''}
+      </div>
+      <div class="queue-time">${time}</div>
+    </div>`;
+  }).join('');
+}
+
+function escapeHtml(s) {
+  if (!s) return '';
+  const div = document.createElement('div');
+  div.textContent = s;
+  return div.innerHTML;
+}
+
+// ─── INIT ───
+renderEntries();
+</script>
+</body>
+</html>

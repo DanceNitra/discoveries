@@ -241,7 +241,7 @@
   </section>
   <div class="container">
     <div class="stats">
-      <div class="stat"><div class="stat-num">8</div><div class="stat-lbl">publications</div></div>
+      <div class="stat"><div class="stat-num">9</div><div class="stat-lbl">publications</div></div>
       <div class="stat"><div class="stat-num">7</div><div class="stat-lbl">domains bridged</div></div>
       <div class="stat"><div class="stat-num">728</div><div class="stat-lbl">vault concepts</div></div>
       <div class="stat"><div class="stat-num">431</div><div class="stat-lbl">evergreen notes</div></div>
@@ -640,6 +640,49 @@ function escapeHtml(s) {
   div.textContent = s;
   return div.innerHTML;
 }
+
+// ─── PUBLICATION 9: FEP × PORTFOLIO OPTIMIZATION ───
+a('fep-portfolio','Free Energy Principle × Portfolio Optimization',
+'The Free Energy Principle and portfolio theory solve the same equation. Active inference provides a unified framework where rebalancing emerges naturally from uncertainty reduction.',
+['neuroscience','finance','control theory'],['t-green','t-blue','t-orange'],
+`<p>A Markowitz portfolio and a Bayesian brain solve the same equation. The risk aversion parameter is the precision of the prior. The rebalancing schedule is active inference. There is no separate exploration vs exploitation tradeoff — there is only expected free energy, and the portfolio acts to minimize it.</p>
+
+<table>
+<tr><th>Neuroscience (FEP)</th><th>Finance (Portfolio Theory)</th><th>The Bridge</th></tr>
+<tr><td>Variational free energy: accuracy + complexity</td><td>Mean-variance: return - λ·risk</td><td>Both penalize complexity to prevent overfitting</td></tr>
+<tr><td>Precision of prediction error</td><td>Risk aversion parameter λ</td><td>Both modulate how much new evidence changes beliefs</td></tr>
+<tr><td>Active inference: epistemic + pragmatic value</td><td>Rebalancing: explore + exploit</td><td>Both drive action under uncertainty</td></tr>
+<tr><td>Belief updating via variational Bayes</td><td>Position sizing via Kalman-filtered edge</td><td>Both are optimal estimation under uncertainty</td></tr>
+<tr><td>Allostatic load: set point drift</td><td>Risk tolerance creep in drawdown</td><td>Both need external recalibration</td></tr>
+</table>
+
+<h2>The Same Equation</h2>
+<p>Markowitz mean-variance: <strong>Maximize μ'w - λ·w'Σw</strong>. Friston variational free energy: <strong>Minimize -log P(data|model) + KL[Q(model)||P(model)].</strong> The accuracy term in FEP corresponds to expected return in portfolio theory. The complexity term corresponds to the risk penalty. The risk aversion parameter λ corresponds to the precision of the prior — higher λ means a tighter prior, less willingness to deviate from the benchmark.</p>
+
+<p><strong>Portfolio overfitting is the exact same pathology as cognitive overfitting.</strong> Both overfit to past data and collapse when conditions change. The cure is the same: proper regularization via the accuracy-complexity tradeoff. Fractional Kelly, shrinkage estimation, and Bayesian priors on returns are all manifestations of this principle.</p>
+
+<h2>Active Inference Rebalancing</h2>
+<p>Standard rebalancing corrects drift — purely reactive. Active inference rebalancing has two drivers: <strong>pragmatic value</strong> (target allocation) and <strong>epistemic value</strong> (what will I learn?). When uncertainty is high, the portfolio deliberately deviates from target because the information gained from testing the market is worth the temporary misallocation.</p>
+
+<p>When uncertainty is low: converge to target. When high: explore. When moderate: the natural balance emerges from the mathematics — not a parameter to tune.</p>
+
+<h2>Allostatic Load and Risk Tolerance</h2>
+<p>Allostatic load is the physiological cost of chronic stress — set points drift. In trading, this is risk tolerance creep during prolonged drawdown. After months of losses, dangerous position sizes feel normal.</p>
+
+<table>
+<tr><th>Biological Allostatic Load</th><th>Trading Allostatic Load</th></tr>
+<tr><td>HPA axis set point rises</td><td>Risk tolerance threshold rises</td></tr>
+<tr><td>Cortisol stays elevated</td><td>Position sizes creep up</td></tr>
+<tr><td>Body habituates to chronic stress</td><td>Trader habituates to chronic losses</td></tr>
+<tr><td>Need external measurement (HbA1c)</td><td>Need external measurement (pre-committed stops)</td></tr>
+</table>
+
+<p>The fix is identical: external reference recalibration. This is the strongest argument for automated execution. The agent has no allostatic load. Its comparator is fixed.</p>
+
+<blockquote>The optimal portfolio is the one that minimizes surprise about the world it operates in. The optimal cognitive system is the one that minimizes surprise about the world it perceives. These are the same thing. The bridge is not a metaphor — it is an isomorphism.</blockquote>`,
+
+'Sources: Free Energy Principle & Active Inference.md, Portfolio Theory & Risk Management.md, Control Theory as Universal Bridge.md, Control Theory.md, Bayesian Inference.md, Reinforcement Learning.md, Allostatic Load.md.'
+);
 
 // ─── INIT ───
 renderEntries();

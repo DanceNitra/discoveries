@@ -1,13 +1,13 @@
-"""Pipeline poller — reads the discovery queue and triggers pipeline runs.
+"""Pipeline poller — reads the discovery queue and triggers agent pipeline runs.
 
-Designed to run on a cron schedule (every 15-30 minutes).
-Picks up pending topics, spawns the discovery pipeline for each,
-updates status to in_progress, and pushes results back.
+Now invokes Hermes skills in sequence:
+  1. discovery-query-classifier
+  2. discovery-orchestrator
+  3. discovery-writer-agent
+  4. discovery-validator-agent
+  5. discovery-publisher-agent
 
-Run: python3 pipeline_poller.py [--once]
-
-In cron mode (--once), processes one batch and exits.
-The scheduler/cron handles frequency.
+The poller manages the queue and status. Skills do the actual work.
 """
 
 import json
@@ -26,6 +26,9 @@ STATUS_PENDING = "pending"
 STATUS_IN_PROGRESS = "in_progress"
 STATUS_PUBLISHED = "published"
 STATUS_FAILED = "failed"
+STATUS_VALIDATED = "validated"
+STATUS_WRITING = "writing"
+STATUS_VALIDATING = "validating"
 
 
 def load_queue():
@@ -39,7 +42,10 @@ def save_queue(data):
     os.makedirs(QUEUE_DIR, exist_ok=True)
     with open(QUEUE_FILE, "w") as f:
         json.dump(data, f, indent=2, default=str)
-    # Publish dashboard
+    publish_dashboard(data)
+
+
+def publish_dashboard(data):
     dashboard = {
         "topics": [
             {
@@ -62,19 +68,15 @@ def save_queue(data):
         try:
             subprocess.run(
                 ["git", "add", "api/queue.json"],
-                cwd=DISCOVERIES_REPO,
-                capture_output=True,
+                cwd=DISCOVERIES_REPO, capture_output=True,
             )
             subprocess.run(
                 [
-                    "git",
-                    "commit",
-                    "-m",
-                    f"queue: update dashboard — {len(dashboard['topics'])} topics",
+                    "git", "commit",
+                    "-m", f"queue: update dashboard — {len(dashboard['topics'])} topics",
                     "--allow-empty",
                 ],
-                cwd=DISCOVERIES_REPO,
-                capture_output=True,
+                cwd=DISCOVERIES_REPO, capture_output=True,
             )
             subprocess.run(["git", "push"], cwd=DISCOVERIES_REPO, capture_output=True)
         except Exception as e:
@@ -82,16 +84,15 @@ def save_queue(data):
 
 
 def acquire_lock():
-    """Prevent concurrent pipeline runs."""
     if os.path.exists(PID_FILE):
         try:
             with open(PID_FILE) as f:
                 pid = int(f.read().strip())
-            os.kill(pid, 0)  # Check if process exists
+            os.kill(pid, 0)
             print(f"[warn] Pipeline already running (PID {pid})")
             return False
         except (OSError, ValueError):
-            pass  # Stale PID, reclaim
+            pass
     with open(PID_FILE, "w") as f:
         f.write(str(os.getpid()))
     return True
@@ -102,65 +103,89 @@ def release_lock():
         os.remove(PID_FILE)
 
 
-def process_topic(topic):
-    """Trigger the Hermes discovery pipeline for a single topic.
+def ensure_results_dir(topic_id):
+    d = os.path.join(QUEUE_DIR, "results", topic_id)
+    os.makedirs(d, exist_ok=True)
+    return d
 
-    For Phase A, this is a stub that sets the topic to in_progress.
-    Phase B will implement the actual discovery agents.
-    """
-    topic_id = topic["id"]
-    title = topic["title"]
-    description = topic.get("description", "")
 
-    print(f"Processing topic: {title} (ID: {topic_id})")
+def find_topic(data, topic_id):
+    for t in data.get("topics", []):
+        if t["id"] == topic_id:
+            return t
+    return None
 
-    # Update status to in_progress
-    topic["status"] = STATUS_IN_PROGRESS
-    topic["started_at"] = datetime.now(timezone.utc).isoformat()
-    save_queue(load_queue())  # Re-read to avoid race, then update
 
-    try:
-        # TODO Phase B: spawn discovery agents here
-        # For now, simulate a successful pipeline run
-        print(f"  Discovery agents searching for connections...")
-        time.sleep(1)  # Simulate work
-
-        # On success
-        topic["status"] = STATUS_PUBLISHED
-        topic["completed_at"] = datetime.now(timezone.utc).isoformat()
-        topic["publication_url"] = None  # Will be set when actually published
-        print(f"  ✓ Published: {title}")
-
-    except Exception as e:
-        topic["status"] = STATUS_FAILED
-        topic["failed_at"] = datetime.now(timezone.utc).isoformat()
-        topic["error"] = str(e)
-        print(f"  ✗ Failed: {e}")
-
-    return topic
+def set_status(data, topic_id, status, **extra):
+    t = find_topic(data, topic_id)
+    if t:
+        t["status"] = status
+        for k, v in extra.items():
+            t[k] = v
+    return data
 
 
 def main():
     once = "--once" in sys.argv
+    force_topic = None
+    for arg in sys.argv:
+        if arg.startswith("--topic="):
+            force_topic = arg.split("=", 1)[1]
 
     if not acquire_lock():
         return 1
 
     try:
         data = load_queue()
-        pending = [t for t in data.get("topics", []) if t.get("status") == STATUS_PENDING]
 
-        if not pending:
-            print("No pending topics.")
+        # Determine which topics to process
+        if force_topic:
+            candidates = [t for t in data.get("topics", []) if t["id"] == force_topic]
+        else:
+            # Process in priority order: pending > failed > writing > validating
+            candidates = [t for t in data.get("topics", [])
+                         if t.get("status") in (STATUS_PENDING, STATUS_FAILED)]
+
+        if not candidates:
+            print("No topics to process.")
             return 0
 
-        print(f"Found {len(pending)} pending topic(s)")
+        topic = candidates[0]
+        topic_id = topic["id"]
+        title = topic["title"]
+        results_dir = ensure_results_dir(topic_id)
 
-        for topic in pending:
-            process_topic(topic)
-            save_queue(load_queue())  # Persist after each topic
-            if once:
-                break  # Only process one topic per cron tick
+        print(f"Topic: {title} ({topic_id})")
+        print(f"Status: {topic.get('status')}")
+        print(f"Results dir: {results_dir}")
+        print("")
+        print("This script manages the queue. Skills do the work.")
+        print("")
+        print("To process this topic, run with an LLM-driven cron job")
+        print("that loads the pipeline skills in sequence:")
+        print("")
+        print("  1. skill_view('discovery-query-classifier')")
+        print("  2. skill_view('discovery-orchestrator')")
+        print("  3. skill_view('discovery-writer-agent')")
+        print("  4. skill_view('discovery-validator-agent')")
+        print("  5. skill_view('discovery-publisher-agent')")
+        print("")
+        print("Each skill contains the full instructions for that stage.")
+        print("")
+        print(f"Topic data:")
+        print(f"  Title: {topic.get('title')}")
+        print(f"  Description: {topic.get('description')}")
+        print(f"  Domains: {topic.get('domains', [])}")
+        print(f"  Created: {topic.get('created_at')}")
+        print(f"  Retries: {topic.get('retry_count', 0)}")
+
+        # Set to in_progress
+        set_status(data, topic_id, STATUS_IN_PROGRESS,
+                   started_at=datetime.now(timezone.utc).isoformat())
+        save_queue(data)
+
+        print(f"\nStatus updated to: {STATUS_IN_PROGRESS}")
+        print(f"An agent session should now load the skills and execute them.")
 
     finally:
         release_lock()

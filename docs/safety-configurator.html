@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Safety Configurator</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--b:#171717;--w:#fff;--g50:#fafafa;--g100:#ebebeb;--g200:#e0e0e0;--g400:#808080;--g500:#666;--g600:#4d4d4d;--blue:#0068d6;--blue-bg:#ebf5ff;--green:#006836;--green-bg:#ebf9eb;--orange:#d66800;--red:#d60000;--red-bg:#ffe8e8;--purple:#6b00d6;--border:rgba(0,0,0,0.08)0px 0px 0px 1px;--card:rgba(0,0,0,.08)0px 0px 0px 1px,rgba(0,0,0,.04)0px 2px 2px,rgba(0,0,0,.04)0px 8px 8px -8px,#fafafa 0px 0px 0px 1px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Geist',system-ui,-apple-system,sans-serif;background:var(--w);color:var(--b);line-height:1.6}
+.container{max-width:960px;margin:0 auto;padding:0 24px}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.85);backdrop-filter:blur(12px);box-shadow:rgba(0,0,0,.06)0px 1px 0px}
+nav .container{display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font-size:16px;font-weight:600;letter-spacing:-.4px;color:var(--b);text-decoration:none;display:flex;align-items:center;gap:8px}
+.logo span{width:7px;height:7px;border-radius:2px;background:var(--b);display:inline-block}
+.nav-r{display:flex;align-items:center;gap:4px}
+.nav-r a{font-size:14px;color:var(--g500);text-decoration:none;padding:6px 14px;transition:color .15s;border-radius:6px}
+.nav-r a:hover{color:var(--b);background:var(--g50)}
+
+/* LAYOUT */
+.hero{padding:60px 0 30px;text-align:center}
+.hero h1{font-size:clamp(24px,4vw,40px);font-weight:600;letter-spacing:-.03em;line-height:1.1}
+.hero p{color:var(--g500);font-size:15px;max-width:560px;margin:12px auto 0;line-height:1.6}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:32px;padding-bottom:60px}
+@media(max-width:800px){.row{grid-template-columns:1fr}}
+
+/* FORM */
+.form-section h2{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--g500);margin-bottom:16px;margin-top:32px}
+.form-section h2:first-child{margin-top:0}
+.form-group{margin-bottom:20px}
+.form-group label{display:block;font-size:13px;font-weight:500;color:var(--g600);margin-bottom:6px}
+.form-group .desc{font-size:12px;color:var(--g400);margin-bottom:8px;line-height:1.5}
+.form-group select,.form-group textarea,.form-group input{width:100%;padding:10px 12px;border:1px solid var(--g200);border-radius:8px;font-size:14px;font-family:inherit;outline:none;transition:border-color .15s;background:var(--w)}
+.form-group select:focus,.form-group textarea:focus,.form-group input:focus{border-color:var(--b)}
+.form-group textarea{min-height:80px;resize:vertical}
+
+/* CHECKBOX GRID */
+.check-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.check-item{display:flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--g200);border-radius:6px;cursor:pointer;transition:all .12s;font-size:13px}
+.check-item:hover{border-color:var(--g400)}
+.check-item input{display:none}
+.check-item .ck{width:16px;height:16px;border:2px solid var(--g400);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .12s;font-size:10px;color:transparent}
+.check-item input:checked+.ck{background:var(--b);border-color:var(--b);color:var(--w)}
+.check-item input:checked+.ck::after{content:"✓";color:var(--w)}
+.check-item.selected{border-color:var(--b);background:var(--g50)}
+
+/* RESULTS */
+.results{padding-bottom:60px}
+.results .panel{background:var(--g50);border-radius:12px;padding:24px;margin-bottom:20px;box-shadow:var(--card)}
+.results .panel h3{font-size:14px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.results .panel h3 .badge{font-size:10px;padding:2px 6px;border-radius:9999px;font-weight:500}
+.badge.low{background:var(--green-bg);color:var(--green)}
+.badge.med{background:var(--orange-bg);color:var(--orange)}
+.badge.high{background:var(--red-bg);color:var(--red)}
+
+.results table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
+.results th,.results td{padding:8px 12px;text-align:left;box-shadow:var(--border)}
+.results th{background:var(--w);font-weight:500;color:var(--g600);font-size:12px}
+.results td{vertical-align:top}
+.level-tag{display:inline-block;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:500}
+.level-tag.l1{background:var(--green-bg);color:var(--green)}
+.level-tag.l2{background:#e8f4f8;color:#007a99}
+.level-tag.l3{background:var(--orange-bg);color:var(--orange)}
+.level-tag.l4{background:var(--red-bg);color:var(--red)}
+.level-tag.l5{background:#f0e8f8;color:#6b00d6}
+
+/* YAML */
+.yaml-block{background:var(--b);color:#e0e0e0;border-radius:8px;padding:20px;font-family:'Geist Mono',monospace;font-size:13px;line-height:1.5;overflow-x:auto;white-space:pre;margin:12px 0}
+.yaml-block .comment{color:var(--g500)}
+.yaml-block .key{color:#7ec8e3}
+.yaml-block .string{color:#a8d8a8}
+.yaml-block .bool{color:#d4a8d4}
+.yaml-block .num{color:#e8b870}
+
+/* CHECKLIST */
+.checklist{margin:12px 0}
+.checklist-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;box-shadow:rgba(0,0,0,.06)0px 1px 0px;font-size:13px}
+.checklist-item:last-child{box-shadow:none}
+.cl-check{cursor:pointer;width:18px;height:18px;border:2px solid var(--g400);border-radius:4px;flex-shrink:0;margin-top:2px;transition:all .12s;display:flex;align-items:center;justify-content:center;font-size:10px}
+.cl-check.done{background:var(--green);border-color:var(--green);color:var(--w)}
+.cl-check.done::after{content:"✓";color:var(--w)}
+.cl-check.warn{background:var(--orange);border-color:var(--orange)}
+.cl-check.warn::after{content:"!";color:var(--w)}
+.cl-text{flex:1}
+.cl-text strong{display:block;font-weight:500;margin-bottom:2px}
+.cl-text .cl-detail{color:var(--g400);font-size:12px}
+.cl-stat{font-size:11px;color:var(--g400);margin-top:8px;padding-top:8px;box-shadow:rgba(0,0,0,.06)0px -1px 0px;display:flex;justify-content:space-between}
+
+/* BUTTONS */
+.btn-row{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:500;border:none;cursor:pointer;transition:all .12s}
+.btn-primary{background:var(--b);color:var(--w)}
+.btn-primary:hover{opacity:.85}
+.btn-secondary{background:var(--w);color:var(--b);box-shadow:var(--border)}
+.btn-secondary:hover{background:var(--g50)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* SUMMARY BADGE */
+.summary{text-align:center;padding:30px 0 0}
+.summary .big{font-size:48px;font-weight:600;line-height:1}
+.summary .lbl{font-size:13px;color:var(--g500);margin-top:4px}
+
+.hide{display:none!important}
+</style>
+</head>
+<body>
+<nav>
+<div class="container">
+<a class="logo" href="https://dancenitra.github.io/discoveries/"><span></span> safety configurator</a>
+<div class="nav-r">
+<a href="https://dancenitra.github.io/discoveries/">Discoveries</a>
+</div>
+</div>
+</nav>
+
+<section class="hero">
+<div class="container">
+<h1>Agent Safety Configurator</h1>
+<p>Answer a few questions about your agent system. Get a complete safety configuration — permission matrix, guardrail architecture, circuit breakers, and audit checklist.</p>
+</div>
+</section>
+
+<div class="container">
+<div class="row">
+<div class="form-section" id="form-side">
+<h2>Agent Profile</h2>
+
+<div class="form-group">
+<label>What kind of agent are you building?</label>
+<div class="desc">Determines default tool set and risk baseline.</div>
+<select id="agent-type">
+<option value="chatbot">Chatbot / QA — reads knowledge, answers questions</option>
+<option value="code">Code assistant — writes files, runs commands</option>
+<option value="auto">Autonomous agent — plans and executes multi-step tasks</option>
+<option value="fileops">File operations agent — moves, edits, organizes files</option>
+<option value="research">Research agent — browses web, reads documents, summarizes</option>
+<option value="custom">Custom — I'll specify tools manually</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>What tools does your agent have access to?</label>
+<div class="desc">Select all that apply. More tools = larger safety surface.</div>
+<div class="check-grid" id="tools-grid"></div>
+</div>
+
+<div class="form-group">
+<label>Deployment environment</label>
+<select id="env">
+<option value="local">Local machine (single user, dev)</option>
+<option value="server">Server / cloud (multi-user, production)</option>
+<option value="sandbox">Sandboxed / container (isolated)</option>
+<option value="serverless">Serverless / edge (ephemeral)</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>Autonomy level</label>
+<div class="desc">How much human oversight does the agent need?</div>
+<select id="autonomy">
+<option value="per-call">Per-call approval — human must confirm every tool call</option>
+<option value="session">Session approval — human approves at session start, agent runs inside bounds</option>
+<option value="trusted">Trusted — auto-permit most actions, alert on anomalies</option>
+<option value="autonomous">Autonomous — auto-permit everything within configured limits</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>Data sensitivity</label>
+<div class="desc">What kind of data does the agent access?</div>
+<select id="sensitivity">
+<option value="none">Public / synthetic data only</option>
+<option value="user">User data (preferences, history, content)</option>
+<option value="credentials">Credentials, API keys, secrets</option>
+<option value="production">Production data, customer PII, financial records</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>Self-modification capability</label>
+<div class="desc">Can the agent change its own configuration or code?</div>
+<select id="selfmod">
+<option value="none">None — fixed configuration</option>
+<option value="config">Can update config parameters (within bounds)</option>
+<option value="skills">Can add / modify non-safety skills</option>
+<option value="full">Can modify any system file including safety rules</option>
+</select>
+</div>
+
+<div class="btn-row">
+<button class="btn btn-primary" id="btn-generate">Generate Configuration</button>
+<button class="btn btn-secondary" id="btn-reset">Reset</button>
+</div>
+</div>
+
+<!-- RIGHT: RESULTS -->
+<div class="results hide" id="results-side">
+<div id="results-content"></div>
+</div>
+</div>
+</div>
+
+<script>
+// ─── DATA ───
+const PRESET_TOOLS = {
+  chatbot: ['read_file','search','memory','web_search'],
+  code: ['read_file','write_file','patch','terminal','search'],
+  auto: ['read_file','write_file','patch','delete_file','terminal','web_search','search','memory','cronjob'],
+  fileops: ['read_file','write_file','delete_file','search','memory'],
+  research: ['read_file','search','web_search','memory'],
+  custom: [],
+};
+const ALL_TOOLS = [
+  {id:'read_file',label:'Read files',desc:'Any file on disk'},
+  {id:'write_file',label:'Write files',desc:'Create / overwrite files'},
+  {id:'patch',label:'Patch files',desc:'Find-and-replace edits'},
+  {id:'delete_file',label:'Delete files',desc:'Remove files permanently'},
+  {id:'terminal',label:'Terminal / shell',desc:'Execute arbitrary commands'},
+  {id:'web_search',label:'Web search / HTTP',desc:'Make network requests'},
+  {id:'search',label:'Search files',desc:'Grep / find across disk'},
+  {id:'memory',label:'Memory / skills',desc:'Read/write persistent agent memory'},
+  {id:'cronjob',label:'Cron / scheduling',desc:'Schedule recurring tasks'},
+  {id:'mcp',label:'MCP servers',desc:'External tool servers via MCP'},
+  {id:'admin',label:'Admin / config',desc:'Change system configuration'},
+];
+
+// Build tool grid
+(function(){
+  const grid = document.getElementById('tools-grid');
+  ALL_TOOLS.forEach(t => {
+    const div = document.createElement('div');
+    div.className = 'check-item';
+    const id = 'tool-'+t.id;
+    div.innerHTML = `<input type="checkbox" id="${id}" value="${t.id}"><span class="ck"></span><span><strong>${t.label}</strong><br><span style="font-size:11px;color:var(--g400)">${t.desc}</span></span>`;
+    div.querySelector('input').addEventListener('change',()=>div.classList.toggle('selected'));
+    grid.appendChild(div);
+  });
+})();
+
+// Preset checkboxes when agent type changes
+document.getElementById('agent-type').addEventListener('change', function(){
+  const tools = PRESET_TOOLS[this.value] || [];
+  document.querySelectorAll('#tools-grid input').forEach(inp => {
+    const checked = tools.includes(inp.value);
+    inp.checked = checked;
+    inp.closest('.check-item').classList.toggle('selected', checked);
+  });
+});
+// Apply initial preset
+document.getElementById('agent-type').dispatchEvent(new Event('change'));
+
+// ─── GENERATE ───
+document.getElementById('btn-generate').addEventListener('click', generate);
+document.getElementById('btn-reset').addEventListener('click', ()=>{
+  document.getElementById('agent-type').value='custom';
+  document.getElementById('agent-type').dispatchEvent(new Event('change'));
+  document.querySelectorAll('#tools-grid input').forEach(i=>{i.checked=false;i.closest('.check-item').classList.remove('selected')});
+  document.getElementById('results-side').classList.add('hide');
+});
+
+function generate() {
+  const type = document.getElementById('agent-type').value;
+  const env = document.getElementById('env').value;
+  const autonomy = document.getElementById('autonomy').value;
+  const sensitivity = document.getElementById('sensitivity').value;
+  const selfmod = document.getElementById('selfmod').value;
+  
+  const selectedTools = [...document.querySelectorAll('#tools-grid input:checked')].map(i=>i.value);
+  
+  // Score safety level
+  let riskScore = 0;
+  const toolRisk = {delete_file:3,terminal:3,admin:3,cronjob:2,write_file:2,web_search:2,memory:2,mcp:2,patch:1,read_file:0,search:0};
+  selectedTools.forEach(t => riskScore += toolRisk[t]||0);
+  if (env==='server') riskScore+=2;
+  if (env==='production') riskScore+=3;
+  if (autonomy==='trusted') riskScore+=2;
+  if (autonomy==='autonomous') riskScore+=4;
+  if (sensitivity==='user') riskScore+=2;
+  if (sensitivity==='credentials') riskScore+=4;
+  if (sensitivity==='production') riskScore+=5;
+  if (selfmod==='config') riskScore+=1;
+  if (selfmod==='skills') riskScore+=3;
+  if (selfmod==='full') riskScore+=5;
+  
+  // Risk level
+  let riskLevel = 'low', riskColor = 'var(--green)';
+  if (riskScore>=10) {riskLevel='high'; riskColor='var(--red)';}
+  else if (riskScore>=5) {riskLevel='medium'; riskColor='var(--orange)';}
+  
+  // Guardrail depth
+  const depth = riskScore>=10 ? 9 : riskScore>=5 ? 6 : 3;
+  
+  // Permission matrix
+  const permMatrix = selectedTools.map(t => {
+    const risk = toolRisk[t]||0;
+    let level, label;
+    if (risk>=3) {level='l4';label='destructive';}
+    else if (risk>=2) {level='l3';label='write_persistent';}
+    else if (risk>=1) {level='l2';label='write_scratch';}
+    else {level='l1';label='read';}
+    
+    let sandbox = 'no';
+    if (t==='terminal'||t==='delete_file'||t==='admin') sandbox='yes';
+    else if (level==='l3'||level==='l4') sandbox='preferred';
+    
+    let rateLimit = '100/h';
+    if (t==='delete_file') rateLimit='3/h';
+    if (t==='terminal') rateLimit='30/h';
+    if (t==='cronjob') rateLimit='5/h';
+    if (t==='admin') rateLimit='1/h';
+    if (autonomy==='per-call'||autonomy==='session') rateLimit = rateLimit.replace('/h','/session');
+    
+    return {tool: t, level, label, sandbox, humanConfirm: level==='l4'||level==='l5', rateLimit};
+  });
+  
+  // Circuit breakers
+  const circuitBreakers = [
+    {name:'Error rate >10% in 5 min',action:'Pause agent',auto:true},
+    {name:'Destructive call without confirm',action:'Block + alert',auto:true},
+    {name:'Runaway loop (>20 consecutive tool calls)',action:'Hard stop',auto:true},
+    {name:'Permission escalation detected',action:'Full halt + log',auto:depth>=6},
+    {name:'Cost spike >2× daily budget',action:'Rate-limit, notify',auto:depth>=9},
+    {name:'Self-modification of safety config',action:'Block + escalate to human',auto:selfmod!=='none'},
+    {name:'Tool timeout >30s repeated',action:'Disable tool, fallback',auto:depth>=6},
+  ].filter(b=>b.auto);
+  
+  // YAML
+  const yaml = buildYAML(selectedTools, permMatrix, type, env, autonomy, sensitivity, selfmod, depth, riskLevel);
+  
+  // Checklist
+  const checklist = buildChecklist(selectedTools, env, autonomy, sensitivity, selfmod, depth);
+  
+  // Render
+  document.getElementById('results-side').classList.remove('hide');
+  const el = document.getElementById('results-content');
+  
+  let summaryBadge = '';
+  if (riskLevel==='low') summaryBadge=`<div class="badge low">Low Risk</div>`;
+  else if (riskLevel==='medium') summaryBadge=`<div class="badge med">Medium Risk</div>`;
+  else summaryBadge=`<div class="badge high">High Risk</div>`;
+  
+  el.innerHTML = `
+<div class="summary">
+<div class="big" style="color:${riskColor}">${riskScore}</div>
+<div class="lbl">Risk Score · ${riskLevel.toUpperCase()} · ${depth}-Layer Guardrails</div>
+${summaryBadge}
+</div>
+
+<div class="panel">
+<h3>Permission Matrix</h3>
+<table>
+<tr><th>Tool</th><th>Level</th><th>Sandbox</th><th>Rate Limit</th></tr>
+${permMatrix.map(p=>`<tr><td><code>${p.tool}</code></td><td><span class="level-tag ${p.level}">${p.label}</span></td><td>${p.sandbox}</td><td>${p.rateLimit}</td></tr>`).join('')}
+</table>
+</div>
+
+<div class="panel">
+<h3>Circuit Breakers <span class="badge ${riskLevel}">${circuitBreakers.length} active</span></h3>
+<table>
+<tr><th>Condition</th><th>Response</th></tr>
+${circuitBreakers.map(c=>`<tr><td>${c.name}</td><td>${c.action}</td></tr>`).join('')}
+</table>
+</div>
+
+<div class="panel">
+<h3>Configuration <span style="font-size:12px;font-weight:400;color:var(--g400)">— copy this as config.yaml</span></h3>
+<div class="yaml-block">${yaml}</div>
+<button class="btn btn-secondary btn-small" onclick="copyYAML()" style="margin-top:8px">Copy YAML</button>
+</div>
+
+<div class="panel">
+<h3>Safety Audit Checklist <span style="font-size:12px;font-weight:400;color:var(--g400)">— ${checklist.filter(c=>c.prefilled).length}/${checklist.length} pre-configured</span></h3>
+<div class="checklist" id="checklist-render"></div>
+</div>
+
+<div class="panel" style="text-align:center;font-size:12px;color:var(--g400)">
+Derived from the vault's <a href="https://github.com/DanceNitra/discoveries" style="color:var(--blue)">Nine-Layer Guardrail Architecture</a> and 
+<a href="https://github.com/DanceNitra/discoveries" style="color:var(--blue)">Agent Safety & Guardrails</a> notes.
+</div>
+`;
+  
+  // Render checklist
+  const clEl = document.getElementById('checklist-render');
+  if (clEl) {
+    clEl.innerHTML = checklist.map(c => `
+<div class="checklist-item">
+<div class="cl-check ${c.prefilled?'done':''}"></div>
+<div class="cl-text">
+<strong>${c.text}</strong>
+<div class="cl-detail">${c.detail}</div>
+</div>
+</div>
+`).join('');
+  const done = checklist.filter(c=>c.prefilled).length;
+  clEl.innerHTML += `<div class="cl-stat"><span>${done}/${checklist.length} satisfied</span><span>${checklist.length-done} remaining</span></div>`;
+  }
+  
+  document.getElementById('results-side').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ─── YAML ───
+function buildYAML(tools, permMatrix, type, env, autonomy, sensitivity, selfmod, depth, riskLevel) {
+  let lines = [];
+  
+  function comment(s) { lines.push(`# ${s}`); }
+  function val(k, v) { lines.push(`${k}: ${v}`); }
+  function section(s) { lines.push(''); lines.push(`# ─── ${s} ───`); }
+  
+  comment(`Agent Safety Configuration`);
+  comment(`Generated by discoveres repo — vault-backed Agent Safety Configurator`);
+  comment(`Risk level: ${riskLevel.toUpperCase()} · Guardrail depth: ${depth}-layer`);
+  comment(`Agent type: ${type} · Environment: ${env}`);
+  comment(`Autonomy: ${autonomy} · Data sensitivity: ${sensitivity}`);
+  comment(`Self-modification: ${selfmod}`);
+  lines.push('');
+  val('safety', '');
+  val('  agent:', '');
+  val('    type', `"${type}"`);
+  val('    autonomy_level', `"${autonomy}"`);
+  val('    data_sensitivity', `"${sensitivity}"`);
+  val('    self_modification', `"${selfmod}"`);
+  
+  section('Guardrail Architecture');
+  val('  guardrails:', '');
+  val('    depth', depth);
+  val('    input_filtering', depth >= 3);
+  val('    intent_classification', depth >= 6);
+  val('    moderation_api', depth >= 9);
+  val('    output_content_filtering', depth >= 3);
+  val('    pii_scanning', depth >= 6 && sensitivity !== 'none');
+  val('    format_validation', true);
+  val('    audit_logging', true);
+  
+  section('Permission Matrix');
+  val('  permissions:', '');
+  permMatrix.forEach(p => {
+    val(`    ${p.tool}:`, '');
+    val(`      level`, `"${p.label}"`);
+    val(`      sandbox`, p.sandbox !== 'no');
+    val(`      rate_limit`, `"${p.rateLimit}"`);
+    val(`      require_confirmation`, p.level === 'l4');
+  });
+  
+  section('Circuit Breakers');
+  val('  circuit_breakers:', '');
+  val('    max_error_rate', '0.10');
+  val('    error_window_minutes', 5);
+  val('    max_consecutive_tool_calls', 20);
+  val('    destructive_call_requires_confirm', true);
+  val('    self_modification_blocked', selfmod !== 'full');
+  val('    max_daily_cost_usd', sensitivity === 'production' ? 50 : 10);
+  
+  section('Sandboxing');
+  val('  sandbox:', '');
+  const sandboxed = permMatrix.filter(p => p.sandbox !== 'no').map(p=>p.tool);
+  if (sandboxed.length > 0) {
+    val('    enabled_tools', `[${sandboxed.map(t=>`"${t}"`).join(', ')}]`);
+  }
+  val('    network_restricted', tools.includes('web_search'));
+  val('    timeouts_ms', autonomy === 'autonomous' ? 60000 : 30000);
+  
+  section('Autonomy Constraints');
+  val('  autonomy:', '');
+  if (autonomy === 'per-call' || autonomy === 'session') {
+    val('    require_human_approval', true);
+  }
+  val('    max_turns_per_session', autonomy === 'autonomous' ? 100 : 30);
+  val('    max_destructive_ops_per_session', env === 'production' ? 3 : 10);
+  val('    human_escalation_on_safety_violation', true);
+  
+  section('Model Upgrade Safety');
+  val('  model_upgrade:', '');
+  val('    require_staging_test', env !== 'local');
+  val('    canary_percentage', env === 'production' ? 5 : 100);
+  val('    keep_old_model_for_rollback', true);
+  val('    prompt_regression_test', env !== 'local');
+  
+  section('Observability');
+  val('  observability:', '');
+  val('    structured_logging', true);
+  val('    log_every_tool_call', true);
+  val('    log_reasoning_before_tool', depth >= 6);
+  val('    session_replay_enabled', true);
+  val('    cost_tracking', true);
+  
+  return lines.join('\n');
+}
+
+// ─── CHECKLIST ───
+function buildChecklist(tools, env, autonomy, sensitivity, selfmod, depth) {
+  const items = [
+    {text:'Every tool has an explicit permission level', detail:`${tools.length} tools configured. See Permission Matrix.`, prefill:true},
+    {text:'Destructive tools require per-call confirmation', detail:tools.includes('delete_file') ? 'delete_file is level destructive — confirmation required' : 'No destructive tools detected', prefill:tools.includes('delete_file')||tools.includes('terminal')||tools.includes('admin')},
+    {text:'Input guardrails filter harmful content', detail:`${depth>=3?'Active (3-layer minimum)':'Not configured'}.`, prefill:depth>=3},
+    {text:'Output guardrails scan for PII and harmful content', detail:`${depth>=3?'Active':'Not configured'}`, prefill:depth>=3},
+    {text:'Tool execution has timeouts and resource limits', detail:`30-60s timeouts configured${env==='sandbox'?', sandbox isolation':''}`, prefill:true},
+    {text:'Rate limits exist for every tool and the agent', detail:`${tools.length} tools rate-limited. Agent: ${autonomy==='autonomous'?100:30} max turns.`, prefill:true},
+    {text:'Self-modification tools require confirmation', detail:selfmod==='none'?'No self-modification — safe':selfmod==='full'?'WARNING: self-modification is unbounded':'Self-modification bounded', prefill:selfmod!=='full'},
+    {text:'Safety rules enforced at system level, not just prompt', detail:'Permission matrix is system-enforced. Prompt-level rules are additional.', prefill:true},
+    {text:'Every action logged with timestamp and outcome', detail:'Structured logging configured. See YAML observability section.', prefill:true},
+    {text:'Circuit breakers trip on repeated failures', detail:`${tools.length>=3?'≥3 tools — circuit breakers active':'≤2 tools, low risk'}. Rate limit: ${autonomy==='per-call'?'manual per-call','auto rate limiting'}.`, prefill:tools.length>=3||autonomy==='autonomous'},
+    {text:'Human escalation path exists for safety failures', detail:autonomy==='autonomous'?'Auto-escalation configured':'Manual escalation via session approval', prefill:true},
+    {text:'Staging pipeline for model upgrades', detail:env==='local'?'Dev only, skip staging':'Staging + canary configured in YAML', prefill:env!=='local'},
+    {text:'Cost tracking and budget alerts', detail:sensitivity==='production'?'$50/day hard cap configured':'$10/day monitoring', prefill:sensitivity!=='none'},
+    {text:'Permission matrix reviewed with every new tool', detail:`${tools.length} tools in current matrix. YAML is the single source of truth.`, prefill:true},
+  ];
+  return items;
+}
+
+// ─── COPY ───
+let copiedYaml = '';
+function copyYAML() {
+  const yamlEl = document.querySelector('.yaml-block');
+  if (!yamlEl) return;
+  // Extract raw YAML without ANSI color codes
+  const raw = yamlEl.textContent;
+  navigator.clipboard.writeText(raw).then(()=>{
+    const btn = document.querySelector('.btn-row .btn-secondary');
+    // Flash feedback
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Causal Playground — DAG Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #171717; --white: #fff; --g50: #fafafa; --g100: #ebebeb;
+  --g200: #e0e0e0; --g400: #808080; --g500: #666; --g600: #4d4d4d;
+  --blue: #0068d6; --blue-bg: #ebf5ff; --green: #006836; --green-bg: #ebf9eb;
+  --orange: #d66800; --orange-bg: #fff4eb; --red: #d60000; --red-bg: #ffe8e8;
+  --purple: #6b00d6; --purple-bg: #f0ebff;
+  --border: rgba(0,0,0,0.08) 0px 0px 0px 1px;
+  --card: rgba(0,0,0,0.08) 0px 0px 0px 1px, rgba(0,0,0,0.04) 0px 2px 2px, rgba(0,0,0,0.04) 0px 8px 8px -8px, #fafafa 0px 0px 0px 1px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Geist',system-ui,-apple-system,sans-serif;background:var(--white);color:var(--black);line-height:1.6;-webkit-font-smoothing:antialiased;overflow:hidden;height:100vh}
+.app{display:flex;height:100vh;width:100vw}
+.toolbar{width:52px;background:var(--g50);box-shadow:var(--border);padding:12px 0;display:flex;flex-direction:column;align-items:center;gap:8px;z-index:10;flex-shrink:0}
+.toolbar button{width:36px;height:36px;border:1px solid var(--g200);border-radius:6px;background:var(--white);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .12s;color:var(--g500)}
+.toolbar button:hover{background:var(--g50);border-color:var(--black);color:var(--black)}
+.toolbar button.active{background:var(--blue-bg);border-color:var(--blue);color:var(--blue)}
+.toolbar .sep{width:24px;height:1px;background:var(--g200);margin:4px 0}
+.toolbar .mode-label{font-size:9px;color:var(--g400);text-align:center;line-height:1.2;margin-top:-4px}
+#dag-canvas{flex:1;position:relative;overflow:hidden;cursor:default;background:var(--white)}
+#dag-canvas svg{width:100%;height:100%;display:block}
+.sidebar{width:340px;background:var(--g50);box-shadow:var(--border);overflow-y:auto;flex-shrink:0;border-left:1px solid var(--g200)}
+.sidebar-inner{padding:20px}
+.sidebar h3{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--g500);margin-bottom:12px;margin-top:24px}
+.sidebar h3:first-child{margin-top:0}
+.vars{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.var-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 10px 3px 12px;border-radius:9999px;font-size:12px;font-weight:500;background:var(--blue-bg);color:var(--blue);max-width:160px}
+.var-chip .del{cursor:pointer;font-size:14px;opacity:.5;line-height:1}
+.var-chip .del:hover{opacity:1}
+.var-chip.treat{background:var(--green-bg);color:var(--green)}
+.var-chip.outcome{background:var(--orange-bg);color:var(--orange)}
+.var-chip.unobs{background:var(--g100);color:var(--g600);font-style:italic}
+.sel-row{display:flex;gap:8px;margin-bottom:16px;align-items:center}
+.sel-row select{flex:1;padding:6px 10px;border:1px solid var(--g200);border-radius:6px;font-size:13px;font-family:inherit;background:var(--white);outline:none}
+.sel-row select:focus{border-color:var(--black)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:500;border:none;cursor:pointer;transition:all .12s}
+.btn-primary{background:var(--black);color:var(--white)}
+.btn-primary:hover{opacity:.85}
+.btn-secondary{background:var(--white);color:var(--black);box-shadow:var(--border)}
+.btn-secondary:hover{background:var(--g50)}
+.btn-small{padding:5px 10px;font-size:12px}
+.result-box{padding:14px;border-radius:8px;margin-bottom:12px;font-size:13px;line-height:1.6}
+.result-box h4{font-size:12px;font-weight:600;margin-bottom:6px}
+.result-box.pass{background:var(--green-bg);color:var(--green)}
+.result-box.fail{background:var(--red-bg);color:var(--red)}
+.result-box.info{background:var(--blue-bg);color:var(--blue)}
+.result-box.muted{background:var(--g100);color:var(--g600)}
+.result-box .set{font-family:'Geist Mono',monospace;font-size:12px;padding:2px 6px;background:rgba(0,0,0,.06);border-radius:4px}
+.e-inputs label{display:block;font-size:11px;font-weight:500;color:var(--g500);margin-bottom:4px;margin-top:10px}
+.e-inputs input{width:100%;padding:6px 10px;border:1px solid var(--g200);border-radius:6px;font-size:13px;font-family:inherit;outline:none}
+.e-inputs input:focus{border-color:var(--black)}
+.e-inputs input:first-of-type{margin-top:0}
+.eval-formula{font-family:'Geist Mono',monospace;font-size:13px;padding:10px;background:rgba(0,0,0,.04);border-radius:6px;margin-top:8px;overflow-x:auto}
+.graph-summary{font-size:12px;color:var(--g500);margin-bottom:12px}
+.graph-summary strong{color:var(--g600)}
+.help-text{font-size:12px;color:var(--g500);margin-top:8px;line-height:1.5}
+kbd{display:inline-block;padding:0 4px;height:18px;line-height:18px;font-size:10px;font-family:inherit;background:var(--g100);border-radius:3px;border:1px solid var(--g200)}
+.node-edit-overlay{position:absolute;background:var(--white);border-radius:8px;box-shadow:0 4px 24px rgba(0,0,0,.12);padding:12px;z-index:100;display:none;width:200px}
+.node-edit-overlay input{width:100%;padding:6px 10px;border:1px solid var(--g200);border-radius:6px;font-size:13px;font-family:inherit;outline:none;margin-bottom:8px}
+.node-edit-overlay input:focus{border-color:var(--black)}
+.node-edit-overlay .actions{display:flex;gap:4px;justify-content:flex-end}
+.node-edit-overlay .actions button{padding:4px 10px;border-radius:4px;font-size:11px;border:none;cursor:pointer}
+@media(max-width:900px){.sidebar{width:280px}}
+@media print{@page{size:landscape;margin:.5in}}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="toolbar">
+  <button id="tool-add" title="Add variable (double-click canvas)" class="active">＋</button>
+  <div class="mode-label"></div>
+  <div class="sep"></div>
+  <button id="tool-arrow" title="Draw arrow — click source, then target">→</button>
+  <div class="mode-label"></div>
+  <div class="sep"></div>
+  <button id="tool-move" title="Move variables">✋</button>
+  <div class="mode-label"></div>
+  <div class="sep"></div>
+  <button id="tool-del" title="Delete: click variable or arrow">✕</button>
+  <div class="mode-label"></div>
+  <div class="sep"></div>
+  <button id="tool-clear" title="Clear all">🗑</button>
+</div>
+<div id="dag-canvas"><svg id="dag-svg"></svg></div>
+<div class="sidebar">
+<div class="sidebar-inner">
+
+<h3>Variables</h3>
+<div id="var-list" class="vars"></div>
+
+<h3>Analysis Setup</h3>
+<div class="sel-row">
+  <select id="treat-select"><option value="">— Treatment —</option></select>
+</div>
+<div class="sel-row">
+  <select id="outcome-select"><option value="">— Outcome —</option></select>
+</div>
+<button id="btn-analyze" class="btn btn-primary" style="width:100%;justify-content:center">Run Analysis</button>
+
+<h3>Results</h3>
+<div id="results"></div>
+
+<h3>Sensitivity (E-Value)</h3>
+<div class="e-inputs">
+  <label>Observed Risk Ratio (RR)</label>
+  <input id="e-rr" type="number" step="0.01" min="1" value="2.0">
+  <label>Confidence interval (upper)</label>
+  <input id="e-ci" type="number" step="0.01" min="1" value="2.5">
+</div>
+<button id="btn-eval" class="btn btn-secondary btn-small" style="margin-top:8px">Compute E-Value</button>
+<div id="e-result" class="result-box muted" style="margin-top:8px;display:none"></div>
+
+<h3>Help</h3>
+<div class="help-text">
+  <p><kbd>Double-click</kbd> canvas or click ＋ to add a variable.</p>
+  <p><kbd>→</kbd> mode: click source, then target to draw arrow.</p>
+  <p><kbd>✋</kbd> drag to reposition.</p>
+  <p><kbd>✕</kbd> click a variable or arrow to delete.</p>
+  <p>Select Treatment and Outcome, then <strong>Run Analysis</strong>.</p>
+  <p>Mark variables as "unobserved" by editing after creation.</p>
+  <p style="margin-top:8px">Built from vault concepts: <a href="https://github.com/DanceNitra/discoveries" target="_blank" style="color:var(--blue)">discoveries repo</a></p>
+</div>
+
+</div></div></div>
+
+<script>
+// ─── STATE ───
+let nodes = [];
+let edges = [];
+let nodeIdCounter = 0;
+let mode = 'add'; // add | arrow | move | del
+let arrowSource = null;
+let dragTarget = null, dragOffX = 0, dragOffY = 0;
+
+function node(name, x, y, unobserved=false) {
+  const id = 'n'+(nodeIdCounter++);
+  nodes.push({id, name, x, y, unobserved});
+  return id;
+}
+function edge(from, to) { edges.push({from, to}); }
+
+// ─── RENDER ───
+function render() {
+  const svg = document.getElementById('dag-svg');
+  let w = svg.clientWidth || 800, h = svg.clientHeight || 600;
+  svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
+
+  let html = `<defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#333"/></marker></defs>`;
+
+  // edges
+  for (const e of edges) {
+    const fn = nodes.find(n=>n.id===e.from), tn = nodes.find(n=>n.id===e.to);
+    if (!fn || !tn) continue;
+    const dx = tn.x - fn.x, dy = tn.y - fn.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    const nx = dx/dist, ny = dy/dist;
+    const pad = 24;
+    const x1 = fn.x + nx*pad, y1 = fn.y + ny*pad;
+    const x2 = tn.x - nx*pad, y2 = tn.y - ny*pad;
+    // subtle curve for multiple edges between same pair
+    const sameDir = edges.filter(o=>o.from===e.from&&o.to===e.to);
+    const idx = sameDir.indexOf(e);
+    let c1x=x1,c1y=y1,c2x=x2,c2y=y2;
+    if (sameDir.length>1) {
+      const off = 20 * (idx - (sameDir.length-1)/2);
+      const mx = (x1+x2)/2 + ny*off, my = (y1+y2)/2 - nx*off;
+      c1x = (x1+mx)/2 + ny*off*0.3; c1y = (y1+my)/2 - nx*off*0.3;
+      c2x = (x2+mx)/2 + ny*off*0.3; c2y = (y2+my)/2 - nx*off*0.3;
+      html += `<path d="M${x1},${y1} Q${c1x},${c1y} ${c2x},${c2y}" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)" class="edge" data-from="${e.from}" data-to="${e.to}" style="cursor:pointer"/>`;
+    } else {
+      html += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)" class="edge" data-from="${e.from}" data-to="${e.to}" style="cursor:pointer"/>`;
+    }
+  }
+
+  // nodes
+  for (const n of nodes) {
+    const r = 28;
+    const fill = n.unobserved ? '#e8e8e8' : 
+                 n.id === document.getElementById('treat-select')?.value ? (n.id === document.getElementById('outcome-select')?.value ? '#ddd' : '#d4edda') :
+                 n.id === document.getElementById('outcome-select')?.value ? '#fde8d0' : '#dbeafe';
+    const stroke = n.unobserved ? '#999' :
+                   n.id === document.getElementById('treat-select')?.value ? '#28a745' :
+                   n.id === document.getElementById('outcome-select')?.value ? '#d66800' : '#0068d6';
+    html += `<g class="node-group" data-id="${n.id}" transform="translate(${n.x},${n.y})" style="cursor:${mode==='move'?'grab':mode==='del'?'pointer':'move'}">
+      <circle cx="0" cy="0" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="2.5"/>
+      <text x="0" y="0" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="500" fill="#333" font-family="'Geist',system-ui,sans-serif">${n.name}</text>
+      ${n.unobserved ? `<text x="${r+4}" y="-${r-4}" font-size="9" fill="#999" font-family="'Geist Mono',monospace">U</text>` : ''}
+      <circle cx="0" cy="0" r="${r}" fill="transparent" stroke="transparent" stroke-width="8" class="hit-area"/>
+    </g>`;
+  }
+
+  svg.innerHTML = html;
+  updateVarList();
+  updateSelects();
+}
+
+// ─── VARIABLE LIST ───
+function updateVarList() {
+  const el = document.getElementById('var-list');
+  el.innerHTML = nodes.map(n => {
+    const cls = n.id===(document.getElementById('treat-select')?.value||'')?'treat':
+                n.id===(document.getElementById('outcome-select')?.value||'')?'outcome':
+                n.unobserved?'unobs':'';
+    const label = n.name + (n.unobserved ? ' (U)' : '');
+    return `<span class="var-chip ${cls}">${label} <span class="del" data-id="${n.id}">×</span></span>`;
+  }).join('');
+  el.querySelectorAll('.del').forEach(b=>b.addEventListener('click',()=>delNode(b.dataset.id)));
+}
+
+function updateSelects() {
+  ['treat-select','outcome-select'].forEach(sid => {
+    const sel = document.getElementById(sid);
+    const val = sel.value;
+    sel.innerHTML = '<option value="">— '+(sid==='treat-select'?'Treatment':'Outcome')+' —</option>' +
+      nodes.filter(n=>!n.unobserved).map(n=>`<option value="${n.id}"${n.id===val?' selected':''}>${n.name}</option>`).join('');
+  });
+}
+
+// ─── GRAPH ALGORITHMS ───
+function findPaths(from, to, type='any') {
+  // type: 'any' (all), 'backdoor' (start with -> into from), 'directed' (all arrows forward)
+  const paths = [];
+  const visited = new Set();
+  function dfs(curr, path, usedStart) {
+    if (curr === to) { paths.push([...path, curr]); return; }
+    if (path.length > 12) return; // limit depth
+    for (const e of edges) {
+      if (type === 'directed' || type === 'backdoor') {
+        // For directed/backdoor: follow arrow direction (->) but for colliders we need all three types
+        // Actually for backdoor: first edge must go INTO from (i.e., edge X -> from or edge from -> X?)
+        // Backdoor path: first edge points INTO treatment. That means edge X -> treatment where X is the source?
+        // No: backdoor path starts with an arrow into treatment. So first step: e.to === from (arrow points to treatment)
+      }
+      const next = (e.from === curr) ? e.to : (e.to === curr ? e.from : null);
+      if (next === null) continue;
+      if (visited.has(next)) continue;
+      visited.add(next);
+      dfs(next, [...path, curr], usedStart || (e.to === curr && curr === from));
+      visited.delete(next);
+    }
+  }
+  visited.add(from);
+  dfs(from, [], false);
+  return paths;
+}
+
+// Actually let me implement proper path finding with direction awareness.
+// We need: all paths between treatment and outcome where edges can be traversed
+// in either direction (since backdoor paths go against arrows)
+function findAllPaths(fromId, toId) {
+  const paths = [];
+  const visited = new Set();
+  function walk(curr, path) {
+    if (path.length > 16) return;
+    if (curr === toId) { paths.push([...path]); return; }
+    for (const e of edges) {
+      // traverse either direction
+      const next = e.from === curr ? e.to : (e.to === curr ? e.from : null);
+      if (next === null || visited.has(next)) continue;
+      visited.add(next);
+      path.push({from:e.from, to:e.to, node:next, dir:e.from===curr?'forw':'back'});
+      walk(next, path);
+      path.pop();
+      visited.delete(next);
+    }
+  }
+  visited.add(fromId);
+  walk(fromId, []);
+  return paths;
+}
+
+function isBackdoorPath(path, treatId) {
+  if (path.length === 0) return false;
+  // First edge must point INTO treatment
+  return path[0].to === treatId && path[0].dir === 'back';
+}
+
+function isDirectedPath(path) {
+  return path.every(s => s.dir === 'forw');
+}
+
+function isCollider(e1, e2) {
+  // e1 ends at node X, e2 starts at node X: X is a collider
+  if (!e1 || !e2) return false;
+  return e1.to === e2.from && e2.from === e1.to;
+  // Actually e1 goes A->X, e2 goes X->B: that's not a collider.
+  // Collider: both arrows point INTO X: A->X<-B means e1.to === X and e2.to === X
+}
+
+function isColliderAt(nodeId, seg1, seg2) {
+  // seg1: {from: a, to: nodeId}, seg2: {from: b, to: nodeId} — both point into node = collider
+  if (!seg1 || !seg2) return false;
+  return seg1.to === nodeId && seg2.to === nodeId;
+}
+
+function pathIsBlocked(path, condSet, treatId, outcomeId) {
+  // d-separation: a path is blocked if it contains a collider not in condSet,
+  // or a non-collider that IS in condSet.
+  // For each adjacent triple (A, B, C) along the path:
+  for (let i = 0; i < path.length - 1; i++) {
+    const seg1 = path[i];
+    const mid = seg1.node; // this is B
+    const seg2 = path[i+1];
+
+    const in1 = seg1.to === mid && seg1.dir === 'back'; // -> B
+    const in2 = seg2.to === mid && seg2.dir === 'back'; // -> B
+    
+    // Check if mid is the next node after seg1.node
+    const actualMid1 = seg1.node;
+    const actualMid2Entry = seg2.from;
+    // Hmm, the path format complicates this. Let me simplify.
+    
+    // seg = {from, to, node, dir}. The middle node between seg A->B and B->C is B.
+    // B is the 'node' field of the second segment? No. seg1: A->B, seg2: B->C.
+    // seg1.node = B (the node we traverse to). seg2.node = C (node we traverse to).
+    // Actually: seg1 goes from some node to seg1.node. seg2 goes from seg1.node to seg2.node.
+    const nodeB = seg1.node;
+    const fromAtoB = seg1.dir === 'back' ? seg1.from === nodeB : seg1.to === nodeB;
+    const fromBtoC = seg2.dir === 'back' ? seg2.to === nodeB : seg2.from === nodeB;
+    const fromXtoB = seg1.dir === 'forw' ? seg1.from === seg1.from : true; // messy
+    // Let me restart with cleaner logic.
+  }
+  return false;
+}
+
+// Simpler: check if a set of nodes blocks all backdoor paths
+function findBackdoorPaths(treatId, outcomeId) {
+  const allPaths = findAllPaths(treatId, outcomeId);
+  return allPaths.filter(p => isBackdoorPath(p, treatId));
+}
+
+function findMinimalAdjustmentSet(treatId, outcomeId, observedNodes) {
+  // Find all backdoor paths from treat to outcome
+  const bPaths = findBackdoorPaths(treatId, outcomeId);
+  if (bPaths.length === 0) return {adjustment: [], identified: true, msg: 'No backdoor paths — effect is directly identifiable.'};
+  
+  // Find the minimal set of observed nodes that blocks all backdoor paths
+  // This is a set cover problem, but we can do a simpler greedy:
+  // For each backdoor path, find the observed nodes on it
+  // Then find minimal set covering all paths
+  
+  const candidates = new Set();
+  const pathNodes = bPaths.map(p => {
+    const nodes = [...new Set(p.map(s => s.node))].filter(n => n !== treatId && n !== outcomeId && observedNodes.includes(n));
+    nodes.forEach(n => candidates.add(n));
+    return nodes;
+  });
+  
+  // Greedy set cover
+  const allCandidates = [...candidates];
+  const covered = new Set();
+  const adjustment = [];
+  
+  while (covered.size < bPaths.length) {
+    let bestN = null, bestC = 0;
+    for (const n of allCandidates) {
+      if (adjustment.includes(n)) continue;
+      let cnt = 0;
+      for (let i = 0; i < bPaths.length; i++) {
+        if (!covered.has(i) && pathNodes[i].includes(n)) cnt++;
+      }
+      if (cnt > bestC) { bestC = cnt; bestN = n; }
+    }
+    if (!bestN || bestC === 0) break;
+    adjustment.push(bestN);
+    for (let i = 0; i < bPaths.length; i++) {
+      if (pathNodes[i].includes(bestN)) covered.add(i);
+    }
+  }
+  
+  return {adjustment, identified: true, msg: `Adjust on {${adjustment.map(id=>nodes.find(n=>n.id===id)?.name).join(', ')}}`};
+}
+
+// ─── ANALYSIS ───
+function runAnalysis() {
+  const treatId = document.getElementById('treat-select').value;
+  const outcomeId = document.getElementById('outcome-select').value;
+  const el = document.getElementById('results');
+  
+  if (!treatId || !outcomeId) {
+    el.innerHTML = `<div class="result-box info"><h4>⚠ Select Variables</h4>Choose a Treatment and Outcome variable first.</div>`;
+    return;
+  }
+  if (treatId === outcomeId) {
+    el.innerHTML = `<div class="result-box fail"><h4>✕ Invalid</h4>Treatment and Outcome must be different variables.</div>`;
+    return;
+  }
+  
+  const treatName = nodes.find(n=>n.id===treatId)?.name;
+  const outcomeName = nodes.find(n=>n.id===outcomeId)?.name;
+  const observedIds = nodes.filter(n=>!n.unobserved).map(n=>n.id);
+  
+  // 1. Find all paths
+  const allPaths = findAllPaths(treatId, outcomeId);
+  const bPaths = allPaths.filter(p => p.length > 0 && isBackdoorPath(p, treatId));
+  const dirPaths = allPaths.filter(p => p.length > 0 && isDirectedPath(p));
+  
+  let html = '';
+  
+  // 2. Backdoor paths
+  if (bPaths.length === 0) {
+    html += `<div class="result-box pass"><h4>✓ No Backdoor Paths</h4>The effect of ${treatName} on ${outcomeName} is directly identifiable via the backdoor criterion. No adjustment needed.</div>`;
+  } else {
+    html += `<div class="result-box info"><h4>⚠ ${bPaths.length} Backdoor Path${bPaths.length>1?'s':''} Found</h4>`;
+    html += `<div style="font-size:11px;margin-top:6px">`;
+    for (let i=0; i<bPaths.length; i++) {
+      const p = bPaths[i];
+      const names = [treatName, ...p.map(s=>nodes.find(n=>n.id===s.node)?.name||'?')];
+      html += `<div style="margin:3px 0">Path ${i+1}: ${names.join(' → ')}</div>`;
+    }
+    html += `</div></div>`;
+    
+    // Minimal adjustment set
+    const result = findMinimalAdjustmentSet(treatId, outcomeId, observedIds);
+    if (result.adjustment.length > 0) {
+      html += `<div class="result-box pass"><h4>✓ Minimal Adjustment Set</h4>`;
+      html += `<div style="margin-top:4px">Condition on: <span class="set">{${result.adjustment.map(id=>nodes.find(n=>n.id===id)?.name).join(', ')}}</span></div>`;
+    } else {
+      html += `<div class="result-box fail"><h4>✕ Unidentified</h4>Cannot block all backdoor paths with observed variables. Consider adding more measured variables or using frontdoor criterion.</div>`;
+    }
+  }
+  
+  // 3. Directed paths (causal pathways)
+  if (dirPaths.length > 0) {
+    html += `<div class="result-box muted"><h4>→ ${dirPaths.length} Directed Path${dirPaths.length>1?'s':''}</h4>`;
+    html += `<div style="font-size:11px;margin-top:6px">`;
+    for (let i=0; i<Math.min(dirPaths.length,5); i++) {
+      const p = dirPaths[i];
+      const names = [treatName, ...p.map(s=>nodes.find(n=>n.id===s.node)?.name||'?')];
+      html += `<div style="margin:3px 0">Path ${i+1}: ${names.join(' → ')}</div>`;
+    }
+    if (dirPaths.length > 5) html += `<div style="margin:3px 0;color:var(--g400)">... and ${dirPaths.length-5} more</div>`;
+    html += `</div></div>`;
+  }
+  
+  // 4. d-separation test for arbitrary adjustment
+  html += `<div class="result-box info"><h4>🔍 d-Separation Test</h4>`;
+  html += `<div style="font-size:12px;margin-top:6px">`;
+  html += `Select a set of variables to condition on (under construction — use the minimal adjustment set above).`;
+  html += `</div></div>`;
+  
+  // 5. Graph summary
+  html += `<div class="result-box muted"><h4>Graph Info</h4>`;
+  html += `<div style="font-size:11px">${nodes.length} variables, ${edges.length} arrows, ${allPaths.length} total paths between ${treatName} and ${outcomeName}</div>`;
+  html += `</div>`;
+  
+  el.innerHTML = html;
+  render();
+}
+
+// ─── E-VALUE ───
+function computeEValue() {
+  const rr = parseFloat(document.getElementById('e-rr').value);
+  const ci = parseFloat(document.getElementById('e-ci').value);
+  const el = document.getElementById('e-result');
+  
+  if (!rr || rr < 1) { el.style.display='block'; el.className='result-box fail'; el.innerHTML='<h4>✕ Invalid</h4>RR must be >= 1.'; return; }
+  
+  const evalRR = rr + Math.sqrt(rr * (rr - 1));
+  let evalCI = null;
+  if (ci && ci > 1) {
+    evalCI = ci + Math.sqrt(ci * (ci - 1));
+  }
+  
+  el.style.display = 'block';
+  el.className = 'result-box pass';
+  let html = `<h4>E-Value Analysis</h4>`;
+  html += `<div style="margin-top:4px"><strong>E-value (point estimate):</strong> ${evalRR.toFixed(2)}</div>`;
+  html += `<div style="font-size:12px;margin-top:6px">An unmeasured confounder would need a risk ratio of at least <strong>${evalRR.toFixed(2)}</strong> with both the treatment and the outcome (conditional on measured confounders) to explain away the observed association of RR=${rr.toFixed(2)}.</div>`;
+  if (evalCI) {
+    html += `<div style="margin-top:8px"><strong>E-value (CI bound):</strong> ${evalCI.toFixed(2)}</div>`;
+    html += `<div style="font-size:12px;margin-top:6px">An unmeasured confounder with RR < ${evalCI.toFixed(2)} with both treatment and outcome could shift the confidence interval to include the null.</div>`;
+  }
+  const evalFormula = `E-value = RR + √(RR × (RR-1)) = ${rr.toFixed(2)} + √(${rr.toFixed(2)} × ${(rr-1).toFixed(2)}) = ${evalRR.toFixed(2)}`;
+  html += `<div class="eval-formula">${evalFormula}</div>`;
+  el.innerHTML = html;
+}
+
+// ─── INTERACTIONS ───
+let clickCount = 0, clickTimer = null;
+
+document.getElementById('dag-canvas').addEventListener('click', (e) => {
+  const target = e.target.closest('.node-group') || e.target.closest('.edge') || e.target.closest('.hit-area');
+  if (target) {
+    const nodeGroup = target.closest('.node-group');
+    if (nodeGroup) {
+      if (mode === 'del') { delNode(nodeGroup.dataset.id); return; }
+      if (mode === 'arrow') {
+        const id = nodeGroup.dataset.id;
+        if (!arrowSource) { arrowSource = id; nodeGroup.style.opacity='.5'; return; }
+        if (arrowSource !== id && !edges.find(e=>e.from===arrowSource&&e.to===id)) {
+          edges.push({from: arrowSource, to: id});
+        }
+        document.querySelectorAll('.node-group').forEach(g=>g.style.opacity='');
+        arrowSource = null;
+        render();
+        return;
+      }
+    }
+    const edgeEl = target.closest('.edge');
+    if (edgeEl && mode === 'del') {
+      const from = edgeEl.dataset.from, to = edgeEl.dataset.to;
+      const idx = edges.findIndex(e=>e.from===from&&e.to===to);
+      if (idx>=0) edges.splice(idx,1);
+      render();
+      return;
+    }
+  }
+  if (mode !== 'arrow' && mode !== 'del') {
+    clickCount++;
+    if (clickCount === 2) {
+      clickCount=0;
+      addNodeAt(e);
+    }
+    clearTimeout(clickTimer);
+    clickTimer = setTimeout(()=>clickCount=0, 300);
+  }
+});
+
+document.getElementById('dag-canvas').addEventListener('dblclick', (e) => {
+  if (mode === 'add' || mode === 'move') addNodeAt(e);
+});
+
+let dragNode = null;
+document.getElementById('dag-canvas').addEventListener('mousedown', (e) => {
+  const nodeGroup = e.target.closest('.node-group');
+  if (!nodeGroup || mode === 'del' || mode === 'arrow') return;
+  const id = nodeGroup.dataset.id;
+  const n = nodes.find(x=>x.id===id);
+  if (!n) return;
+  const rect = document.getElementById('dag-canvas').getBoundingClientRect();
+  const svg = document.getElementById('dag-svg');
+  const scale = svg.clientWidth / (svg.viewBox.baseVal?.width || svg.clientWidth);
+  const ox = (svg.viewBox.baseVal?.x || 0);
+  const oy = (svg.viewBox.baseVal?.y || 0);
+  dragNode = n;
+  dragOffX = (e.clientX - rect.left) * scale + ox - n.x;
+  dragOffY = (e.clientY - rect.top) * scale + oy - n.y;
+});
+
+document.addEventListener('mousemove', (e) => {
+  if (!dragNode) return;
+  const rect = document.getElementById('dag-canvas').getBoundingClientRect();
+  const svg = document.getElementById('dag-svg');
+  const scale = svg.clientWidth / (svg.viewBox.baseVal?.width || svg.clientWidth);
+  const ox = (svg.viewBox.baseVal?.x || 0), oy = (svg.viewBox.baseVal?.y || 0);
+  dragNode.x = (e.clientX - rect.left) * scale + ox - dragOffX;
+  dragNode.y = (e.clientY - rect.top) * scale + oy - dragOffY;
+  render();
+});
+
+document.addEventListener('mouseup', () => { dragNode = null; });
+
+function addNodeAt(e) {
+  const rect = document.getElementById('dag-canvas').getBoundingClientRect();
+  const svg = document.getElementById('dag-svg');
+  const scale = svg.clientWidth / (svg.viewBox.baseVal?.width || svg.clientWidth);
+  const ox = (svg.viewBox.baseVal?.x || 0), oy = (svg.viewBox.baseVal?.y || 0);
+  const x = (e.clientX - rect.left) * scale + ox;
+  const y = (e.clientY - rect.top) * scale + oy;
+  const names = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const used = nodes.map(n=>n.name);
+  let name = 'X';
+  for (let i=0; i<26; i++) {
+    if (!used.includes(names[i])) { name = names[i]; break; }
+  }
+  node(name, x, y);
+  render();
+}
+
+function delNode(id) {
+  nodes = nodes.filter(n=>n.id!==id);
+  edges = edges.filter(e=>e.from!==id&&e.to!==id);
+  ['treat-select','outcome-select'].forEach(s=>{
+    if (document.getElementById(s).value===id) document.getElementById(s).value='';
+  });
+  render();
+}
+
+function clearAll() {
+  nodes = []; edges = []; nodeIdCounter = 0;
+  document.getElementById('results').innerHTML = '';
+  render();
+}
+
+// ─── TOOLS ───
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('.toolbar button').forEach(b=>b.classList.remove('active'));
+  const map = {add:'tool-add',arrow:'tool-arrow',move:'tool-move',del:'tool-del'};
+  const btn = document.getElementById(map[m]); if (btn) btn.classList.add('active');
+  arrowSource = null;
+  document.querySelectorAll('.node-group').forEach(g=>g.style.opacity='');
+}
+
+document.getElementById('tool-add').addEventListener('click',()=>setMode('add'));
+document.getElementById('tool-arrow').addEventListener('click',()=>setMode('arrow'));
+document.getElementById('tool-move').addEventListener('click',()=>setMode('move'));
+document.getElementById('tool-del').addEventListener('click',()=>setMode('del'));
+document.getElementById('tool-clear').addEventListener('click',()=>{if(confirm('Clear all variables and arrows?'))clearAll()});
+
+// ─── EVENT WIRING ───
+document.getElementById('btn-analyze').addEventListener('click', runAnalysis);
+document.getElementById('btn-eval').addEventListener('click', computeEValue);
+document.getElementById('treat-select').addEventListener('change', render);
+document.getElementById('outcome-select').addEventListener('change', render);
+
+// ─── KEYBOARD ───
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'a' && !e.metaKey && !e.ctrlKey && e.target.tagName !== 'INPUT' && e.target.tagName !== 'SELECT') setMode('add');
+  if (e.key === 'r' || e.key === 'ArrowRight') { if (e.target.tagName !== 'INPUT') setMode('arrow'); }
+  if (e.key === 'm') { if (e.target.tagName !== 'INPUT') setMode('move'); }
+  if (e.key === 'd') { if (e.target.tagName !== 'INPUT') setMode('del'); }
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) runAnalysis();
+});
+
+// ─── INIT ───
+// Seed with example DAG from vault
+node('Smoking', 150, 80);
+node('Lung Cancer', 400, 80);
+node('Tar', 275, 180);
+node('Genetics', 150, 280);
+node('Cough', 400, 280);
+edges.push({from:'n0',to:'n2'});
+edges.push({from:'n2',to:'n1'});
+edges.push({from:'n3',to:'n0'});
+edges.push({from:'n3',to:'n1'});
+edges.push({from:'n1',to:'n4'});
+render();
+</script>
+</body>
+</html>

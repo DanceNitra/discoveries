@@ -158,13 +158,13 @@
   <section class="hero">
     <div class="container">
       <h1>Cross-domain syntheses<br>from a 728-note vault</h1>
-      <p>Bridge publications connecting neuroscience, agent engineering, finance, complexity science, epidemiology, and software architecture.</p>
+      <p>Bridge publications connecting neuroscience, agent engineering, finance, complexity science, epidemiology, software architecture, and systems design.</p>
     </div>
   </section>
   <div class="container">
     <div class="stats">
-      <div class="stat"><div class="stat-num">7</div><div class="stat-lbl">publications</div></div>
-      <div class="stat"><div class="stat-num">6</div><div class="stat-lbl">domains bridged</div></div>
+      <div class="stat"><div class="stat-num">8</div><div class="stat-lbl">publications</div></div>
+      <div class="stat"><div class="stat-num">7</div><div class="stat-lbl">domains bridged</div></div>
       <div class="stat"><div class="stat-num">728</div><div class="stat-lbl">vault concepts</div></div>
       <div class="stat"><div class="stat-num">431</div><div class="stat-lbl">evergreen notes</div></div>
     </div>
@@ -512,6 +512,47 @@ function showArticle(id) {
   document.getElementById('article-footer').innerHTML = '<strong>Sources:</strong> ' + a.footer;
   showView('article');
 }
+
+// ─── PUBLICATION 8: AI ARCHITECT'S PLAYBOOK ───
+a('ai-architect','The AI Architect\'s Playbook',
+'Architecture is not about picking patterns from a menu. It is about reasoning through constraints you cannot change to produce a system you can operate. A sequenced methodology from requirements to operated system.',
+['architecture','agents','systems design'],['t-gray','t-green','t-blue'],
+`<p>Most architectural failures in AI systems are not failures of technical knowledge — they are failures of process. The architect reached for a pattern before understanding the problem, designed for throughput before designing for failure, or built a brilliant internal system that nobody could deploy. The AI Architect's Playbook is the correction: a sequenced methodology that connects theory to design to deploy to operate.</p>
+
+<h2>The Six-Question Frame</h2>
+<p>Before touching any pattern, answer six questions that define your constraint surface. Who uses this system? Single capability or composition? What latency is acceptable? How does it improve? What is the worst thing it could do? Who operates it? These answers are your architecture's constitution — refer back when any decision is contested.</p>
+
+<h2>The Decision Tree</h2>
+<p>With constraints in hand, the pattern choice reduces to a tree. Single capability with fewer than 10 tools — monolithic. Over 10 tools — modular. Two to five known-role agents — pipeline or hub-and-spoke. Five or more dynamic agents — hierarchical or mesh. Environment-mediated — stigmergic. The golden rule: start monolithic, modularise when the prompt hurts, distribute when the context hurts. Premature multi-agent is the single most common architectural sin.</p>
+
+<h2>The Four Universal Failure Modes</h2>
+<p>No architecture eliminates all failure modes. These four survive any topology: silent degradation (quality drifts down undetected), cost explosion (unbounded token consumption), state corruption (memory drift and hallucination cascades), and operator blindness (no one understands what the system is doing). Design countermeasures for all four before optimising for throughput.</p>
+
+<table>
+<tr><th>Failure Mode</th><th>Countermeasure</th></tr>
+<tr><td>Silent degradation</td><td>Three-view observability: performance + quality + drift</td></tr>
+<tr><td>Cost explosion</td><td>Hard and soft cost boundaries: per-turn, per-session, per-day caps</td></tr>
+<tr><td>State corruption</td><td>Epistemic hygiene: source-cited facts, append-only history, periodic truth checks</td></tr>
+<tr><td>Operator blindness</td><td>Session replay as a first-class feature: reconstruct every decision</td></tr>
+</table>
+
+<h2>The Deploy Bridge</h2>
+<p>This is the step most architecture blueprints skip. It is why the vault's 16-phase SDEAS pipeline — architecturally brilliant — has zero external users. The deploy bridge has five layers: model (managed API vs self-hosted), infrastructure (K8s vs serverless vs VM), delivery (CLI vs REST vs event bus), CI/CD (staging -> canary 5% -> production), and operations (runbook for every known failure mode). Staging is not optional. Rollback must cover model, prompt, tools, skills, and memory.</p>
+
+<blockquote>The most common production incident: a model upgrade that silently degrades output because nobody tested the pairing of new model + old prompt. Test the pair before you ship it.</blockquote>
+
+<h2>Three Case Studies</h2>
+<p><strong>SDEAS Pipeline (16 phases, zero external users):</strong> Architecturally brilliant internal system with no deploy bridge designed. The architect never asked "who is the external user?" or "how does the output reach them?" — because these were not treated as design constraints.</p>
+
+<p><strong>Hermes Agent (live production):</strong> The closest reference implementation. Modular architecture with exemplary composition root (config.yaml). Pain points from cost and observability being afterthoughts rather than first-class constraints.</p>
+
+<p><strong>Cognoscope Bias Engine (shipped but silent):</strong> Shipped and deployed but never monitored. Post-deploy monitoring and feedback loops were absent — the system was pushed but nobody checked if it still ran.</p>
+
+<h2>The Six Constraints</h2>
+<p>The synthesis yields six constraints an architecturally sound agent system must satisfy: (1) design for failure before throughput, (2) the deploy bridge is a first-class concern, (3) observability is not monitoring — session replay is the most valuable debugging investment, (4) safety is a constraint surface determined by topology, (5) start monolithic and distribute only at measured bottlenecks, (6) cost governance is safety, not accounting.</p>`,
+
+'Sources: [[The AI Architect's Playbook]] (vault), Production AI System Architecture, Software Architecture for Agentic Systems, Multi-Agent Systems, Agent Architecture Patterns, Event-Driven Architecture, Agent Observability, Agent Safety & Guardrails, SDEAS Roadmap. Full 28K-word vault note available at [[04 Resources/Concepts/The AI Architect\'s Playbook]].'
+);
 
 renderEntries();
 </script>

@@ -9,9 +9,12 @@
         "finance",
         "control theory"
       ],
+      "email": "test@example.com",
       "status": "published",
       "created_at": "2026-05-17T09:37:08.398971+00:00",
-      "completed_at": "2026-05-17T10:20:00.000000+00:00"
+      "completed_at": "2026-05-17T10:20:00.000000+00:00",
+      "publication_url": "fep-portfolio",
+      "started_at": "2026-05-17T10:15:00.000000+00:00"
     },
     {
       "id": "topic_1779012693773",
@@ -22,9 +25,27 @@
         "immunology",
         "evolution"
       ],
+      "email": "",
       "status": "in_progress",
       "created_at": "2026-05-17T10:11:33.773790+00:00",
-      "completed_at": null
+      "completed_at": null,
+      "publication_url": null,
+      "started_at": "2026-05-17T10:26:33.793287+00:00",
+      "strategy": {
+        "strategies": ["serendipity", "causal"],
+        "primary_domain": "game theory",
+        "secondary_domains": ["immunology", "evolution"],
+        "confidence": 0.9,
+        "reasoning": "Three domains detected (game theory, immunology, evolution) with clear causal framing (how does the immune system maintain discrimination?). Serendipity for cross-domain bridge discovery between game theory concepts (Nash equilibrium, ESS, replicator dynamics) and immunology concepts (clonal selection, self/nonself discrimination, tolerance). Causal for the mechanism analysis of how evolutionary dynamics produce self-nonself discrimination."
+      }
+    }
+  ],
+  "runs": [
+    {
+      "topic_id": "topic_1779012693773",
+      "run": 1,
+      "action": "classifier",
+      "timestamp": "2026-05-17T10:52:00.000000+00:00"
     }
   ]
 }

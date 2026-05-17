@@ -1,1 +1,22 @@
-{"topics": []}
+{
+  "topics": [
+    {
+      "id": "topic_1779010628398",
+      "title": "Free Energy Principle and Portfolio Optimization",
+      "description": "Can Friston free energy minimization explain optimal portfolio rebalancing?",
+      "status": "pending",
+      "created_at": "2026-05-17T09:37:08.398971+00:00",
+      "completed_at": null,
+      "publication_url": null
+    },
+    {
+      "id": "topic_1779012693773",
+      "title": "Game Theory and Immune System Regulation",
+      "description": "Can evolutionary game theory explain how the immune system maintains self-nonself discrimination and avoids autoimmunity? Nash equilibria in lymphocyte populations.",
+      "status": "pending",
+      "created_at": "2026-05-17T10:11:33.773790+00:00",
+      "completed_at": null,
+      "publication_url": null
+    }
+  ]
+}
